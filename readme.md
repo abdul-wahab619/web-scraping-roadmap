@@ -25,6 +25,13 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Mapping rating text to numeric values
 - Calculating totals like total books and average price
 
+### Day 4
+- Saving scraped book data as JSON and CSV files
+- Loading saved data from JSON
+- Calculating total and average prices
+- Finding the most expensive and most affordable books
+- Calculating the average book rating
+
 ## Project Structure
 
 ```text
@@ -35,6 +42,11 @@ web-scraping-roadmap/
 │   ├── scraper.py
 │   └── scraper1.py
 ├── Day3/
+│   └── scraper.py
+├── Day4/
+│   ├── analyze.py
+│   ├── books.csv
+│   ├── books.json
 │   └── scraper.py
 ├── readme.md
 └── .gitignore
@@ -51,20 +63,22 @@ web-scraping-roadmap/
 
 https://books.toscrape.com/
 
-## Run Day 3 Script
+## Run Day 4 Scripts
 
 ```bash
-python Day3\scraper.py
+python Day4\scraper.py
+python Day4\analyze.py
 ```
 
-## What the Day 3 Script Does
+## What the Day 4 Scripts Do
 
-- visits the main books page
-- extracts book details from each product card
-- follows pagination through the next page link
-- converts prices into float values
-- converts rating words like One, Two, Three into numbers
-- calculates total books and average price
+- scrape all book pages and extract book details
+- follow pagination through the next page link
+- convert prices and ratings into numeric values
+- save the scraped data to `books.json` and `books.csv`
+- load the JSON data for analysis
+- calculate total books, average price, and average rating
+- find the most expensive and most affordable books
 
 ## Notes
 
