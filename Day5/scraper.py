@@ -25,9 +25,17 @@ rating_map = {
     "Five": 5
 }
 
+session = requests.Session()
+
+session.headers.update({
+    "User-Agent": "Mozilla/5.0 (compatible; WebScrapingCourse/1.0)"
+})
+
 def scrape_detail_page(url):
+    
+    print("Scraping detail page:", url)
     try:
-        response = requests.get(url, timeout=10)
+        response = session.get(url, timeout=10)
         response.raise_for_status()
     
     except requests.RequestException as error:
@@ -75,7 +83,7 @@ def scrape_page(url):
     print("Scraping:", url)
 
     try:
-        response = requests.get(url, timeout=10)
+        response = session.get(url, timeout=10)
         response.raise_for_status()
 
     except requests.RequestException as error:
@@ -86,7 +94,7 @@ def scrape_page(url):
 
     books = []
 
-    all_books = soup.select("article.product_pod")[:2]
+    all_books = soup.select("article.product_pod")
 
     for book in all_books:
 
@@ -139,10 +147,43 @@ def scrape_page(url):
 
 start_url = "https://books.toscrape.com/"
 
-books, next_url = scrape_page(start_url)
+current_url = start_url
 
-print(f"Total books: {len(books)}")
+all_books = []
 
+page_number = 1
 
-for book in books:
-    print(book)
+while current_url and page_number <= 2:
+    print(f"Scraping page {page_number}")
+    books, next_url = scrape_page(current_url)
+
+    all_books.extend(books)
+
+    current_url = next_url
+    page_number += 1
+    
+print(f"Total books: {len(all_books)}")
+
+print("\nFirst book:")
+print(all_books[0])
+
+print("\nLast book:")
+print(all_books[-1])
+    
+
+# print("\n--- Checking first book ---")
+
+# first_book = books[0]
+
+# print("Title:", first_book["title"])
+# print("Price:", first_book["price"])
+# print("Rating:", first_book["rating"])
+# print("URL:", first_book["url"])
+# print("UPC:", first_book["UPC"])
+# print("Product Type:", first_book["Product Type"])
+# print("Price excl. tax:", first_book["Price (excl. tax)"])
+# print("Price incl. tax:", first_book["Price (incl. tax)"])
+# print("Tax:", first_book["Tax"])
+# print("Availability:", first_book["Availability"])
+# print("Reviews:", first_book["Number of reviews"])
+# print("Description:", first_book["description"])
