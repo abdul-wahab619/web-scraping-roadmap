@@ -32,6 +32,14 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Finding the most expensive and most affordable books
 - Calculating the average book rating
 
+### Day 5
+- Using a persistent `requests.Session`
+- Setting a custom User-Agent header
+- Handling request failures with retries and exponential backoff
+- Scraping book detail pages for descriptions and product information
+- Saving the expanded data to JSON and CSV files
+- Limiting the practice run to two listing pages
+
 ## Project Structure
 
 ```text
@@ -45,6 +53,10 @@ web-scraping-roadmap/
 │   └── scraper.py
 ├── Day4/
 │   ├── analyze.py
+│   ├── books.csv
+│   ├── books.json
+│   └── scraper.py
+├── Day5/
 │   ├── books.csv
 │   ├── books.json
 │   └── scraper.py
@@ -63,22 +75,22 @@ web-scraping-roadmap/
 
 https://books.toscrape.com/
 
-## Run Day 4 Scripts
+## Run Day 5 Script
 
 ```bash
-python Day4\scraper.py
-python Day4\analyze.py
+python Day5\scraper.py
 ```
 
-## What the Day 4 Scripts Do
+## What the Day 5 Script Does
 
-- scrape all book pages and extract book details
-- follow pagination through the next page link
+- create a reusable HTTP session with a custom User-Agent
+- retry temporary failures such as HTTP 429 and 5xx responses
+- scrape two listing pages and follow pagination
+- visit each book's detail page
+- extract descriptions, tax values, availability, UPC, and product type
 - convert prices and ratings into numeric values
-- save the scraped data to `books.json` and `books.csv`
-- load the JSON data for analysis
-- calculate total books, average price, and average rating
-- find the most expensive and most affordable books
+- save the expanded data to `Day5/books.json` and `Day5/books.csv`
+- print the total books, first and last books, and average price
 
 ## Notes
 
