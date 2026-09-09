@@ -1,0 +1,18 @@
+Reload the page.
+
+Find out:
+Do you see any Fetch/XHR requests?
+How many?
+Does the homepage's book data come from an API request?
+If not, where is the book data coming from?
+What is the request method for the main page?
+What is the status code?
+Is the book data present in the initial HTML response?
+
+Yes I see Fetch/XHR in network tab
+In  Fetch/XHR I see one request which is script.css
+1 request after finish
+Book data not comes from API request, it uses static data of books
+Request Method used which is 'GET'
+Status Code: 200 OK
+yes book data present in the initial HTML response
