@@ -64,6 +64,16 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Inspecting the headers, URL, query parameters, and cookies received by a server
 - Validating responses with `raise_for_status()`
 
+### Day 9 - Start of Playwright Learning
+- Starting browser automation and dynamic web scraping with Playwright
+- Launching a Chromium browser and navigating to a web page
+- Using locators to find book cards and extract title and price data
+- Waiting for page elements and handling navigation timeouts and errors
+- Following pagination with the Next button
+- Extracting book titles, prices, ratings, and URLs from multiple pages
+- Saving Playwright results to JSON and CSV files
+- Calculating the average price of collected books
+
 ## Project Structure
 
 ```text
@@ -95,6 +105,11 @@ web-scraping-roadmap/
 ├── Day8/
 │   ├── scrapy.py
 │   └── test.py
+├── Day9/
+│   ├── 01_first_playwright.py
+│   ├── 02_playwright.py
+│   ├── books_playwright.csv
+│   └── books_playwright.json
 ├── readme.md
 └── .gitignore
 ```
@@ -108,6 +123,7 @@ web-scraping-roadmap/
 - Public REST APIs
 - JSON and CSV file handling
 - HTTP sessions, headers, parameters, and cookies
+- Playwright browser automation
 
 ## Example Source
 
@@ -176,6 +192,32 @@ python Day8\test.py
 - send custom headers, query parameters, and a session cookie to httpbin
 - print the status, final URL, received headers, query parameters, and cookies
 - practice checking failed HTTP responses with `raise_for_status()`
+
+## Day 9: Start Playwright Learning
+
+Install Playwright and its browser before running the scripts:
+
+```bash
+pip install playwright
+playwright install chromium
+```
+
+## Run Day 9 Scripts
+
+```bash
+python Day9\01_first_playwright.py
+python Day9\02_playwright.py
+```
+
+## What the Day 9 Scripts Do
+
+- open `https://books.toscrape.com/` in a Chromium browser
+- display the page title and count the books found on the page
+- extract the first book's title and price
+- scrape three pages using the Next button
+- collect each book's title, price, rating, and URL
+- save the collected data to `Day9/books_playwright.json` and `Day9/books_playwright.csv`
+- calculate and print the average book price
 
 ## Notes
 
