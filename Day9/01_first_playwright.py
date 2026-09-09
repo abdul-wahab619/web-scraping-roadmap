@@ -13,20 +13,16 @@ with sync_playwright() as p:
 
     books = page.locator("article.product_pod")
 
+    books.first.wait_for(state="visible")
+
     print("Number of books found:", books.count())
 
-    book = books.first
+    first_book = books.first
 
-    title = book.locator("h3 a").get_attribute("title")
-    price = book.locator("p.price_color").inner_text()
-
-    rating_element = book.locator("p.star-rating")
-    classes = rating_element.get_attribute("class")
-    rating = classes.split()[-1]
-    rating = rating_map.get(rating, 0)
+    title = first_book.locator("h3 a").get_attribute("title")
+    price = first_book.locator("p.price_color").inner_text()
 
     print("Title:", title)
     print("Price:", price)
-    print("Rating:", rating)
 
     browser.close()
