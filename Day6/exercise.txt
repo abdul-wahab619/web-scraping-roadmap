@@ -16,3 +16,15 @@ Book data not comes from API request, it uses static data of books
 Request Method used which is 'GET'
 Status Code: 200 OK
 yes book data present in the initial HTML response
+
+
+website: https://dummyjson.com/products
+
+Request URL: https://dummyjson.com/products
+Request method: GET
+Status code: 200 OK
+Remote address: 172.67.205.42:443
+Query Parameters: limit=10&skip=10
+content-type: application/json;
+
+Yes response data displayed on web page
