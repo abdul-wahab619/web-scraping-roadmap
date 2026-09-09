@@ -56,6 +56,14 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Stopping when all products are collected or the page limit is reached
 - Saving API data to JSON and CSV files
 
+### Day 8
+- Using a `requests.Session` to preserve request state
+- Setting custom headers such as `User-Agent` and `Accept`
+- Sending query parameters and cookies with HTTP requests
+- Maintaining cookies across multiple requests
+- Inspecting the headers, URL, query parameters, and cookies received by a server
+- Validating responses with `raise_for_status()`
+
 ## Project Structure
 
 ```text
@@ -84,6 +92,9 @@ web-scraping-roadmap/
 │   ├── products.csv
 │   ├── products.json
 │   └── scrapy.py
+├── Day8/
+│   ├── scrapy.py
+│   └── test.py
 ├── readme.md
 └── .gitignore
 ```
@@ -96,6 +107,7 @@ web-scraping-roadmap/
 - urllib.parse
 - Public REST APIs
 - JSON and CSV file handling
+- HTTP sessions, headers, parameters, and cookies
 
 ## Example Source
 
@@ -149,6 +161,21 @@ python Day7\scrapy.py
 - stop after collecting all products or reaching the maximum page limit
 - save the collected products to `Day7/products.json` and `Day7/products.csv`
 - print the total products collected, including the first and last products
+
+## Run Day 8 Scripts
+
+```bash
+python Day8\scrapy.py
+python Day8\test.py
+```
+
+## What the Day 8 Scripts Do
+
+- create a session with custom `User-Agent` and `Accept` headers
+- set a course cookie and verify that the session sends it on the next request
+- send custom headers, query parameters, and a session cookie to httpbin
+- print the status, final URL, received headers, query parameters, and cookies
+- practice checking failed HTTP responses with `raise_for_status()`
 
 ## Notes
 
