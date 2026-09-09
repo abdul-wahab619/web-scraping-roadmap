@@ -48,6 +48,14 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Reading JSON responses and extracting product and post data
 - Combining paginated API responses into one list
 
+### Day 7
+- Building a reusable API page-fetching function
+- Scraping all products from DummyJSON with `limit` and `skip`
+- Retrying temporary failures with exponential backoff
+- Handling request timeouts and invalid API responses
+- Stopping when all products are collected or the page limit is reached
+- Saving API data to JSON and CSV files
+
 ## Project Structure
 
 ```text
@@ -72,6 +80,10 @@ web-scraping-roadmap/
 │   ├── api-test.py
 │   ├── api.py
 │   └── exercise.txt
+├── Day7/
+│   ├── products.csv
+│   ├── products.json
+│   └── scrapy.py
 ├── readme.md
 └── .gitignore
 ```
@@ -83,6 +95,7 @@ web-scraping-roadmap/
 - BeautifulSoup
 - urllib.parse
 - Public REST APIs
+- JSON and CSV file handling
 
 ## Example Source
 
@@ -120,6 +133,22 @@ python Day6\api-test.py
 - combine the posts from each successful page into one list
 - print the total number of posts and the first and last posts
 - practice checking response status codes and parsing JSON data
+
+## Run Day 7 Script
+
+```bash
+python Day7\scrapy.py
+```
+
+## What the Day 7 Script Does
+
+- request products from `https://dummyjson.com/products` in batches of 20
+- retry HTTP 429 and 5xx responses with exponential backoff
+- handle request exceptions and timeouts
+- validate the product list returned by each API response
+- stop after collecting all products or reaching the maximum page limit
+- save the collected products to `Day7/products.json` and `Day7/products.csv`
+- print the total products collected, including the first and last products
 
 ## Notes
 
