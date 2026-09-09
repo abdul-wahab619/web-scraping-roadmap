@@ -40,6 +40,14 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Saving the expanded data to JSON and CSV files
 - Limiting the practice run to two listing pages
 
+### Day 6
+- Inspecting network requests with browser developer tools
+- Distinguishing static HTML data from API responses
+- Sending GET requests to public REST APIs
+- Using query parameters such as `limit`, `skip`, `_page`, and `_limit`
+- Reading JSON responses and extracting product and post data
+- Combining paginated API responses into one list
+
 ## Project Structure
 
 ```text
@@ -60,6 +68,10 @@ web-scraping-roadmap/
 │   ├── books.csv
 │   ├── books.json
 │   └── scraper.py
+├── Day6/
+│   ├── api-test.py
+│   ├── api.py
+│   └── exercise.txt
 ├── readme.md
 └── .gitignore
 ```
@@ -70,6 +82,7 @@ web-scraping-roadmap/
 - requests
 - BeautifulSoup
 - urllib.parse
+- Public REST APIs
 
 ## Example Source
 
@@ -91,6 +104,22 @@ python Day5\scraper.py
 - convert prices and ratings into numeric values
 - save the expanded data to `Day5/books.json` and `Day5/books.csv`
 - print the total books, first and last books, and average price
+
+## Run Day 6 Scripts
+
+```bash
+python Day6\api.py
+python Day6\api-test.py
+```
+
+## What the Day 6 Scripts Do
+
+- request products from `https://dummyjson.com/products` with pagination parameters
+- display the response status, final URL, total products, and returned products
+- request ten pages of posts from JSONPlaceholder
+- combine the posts from each successful page into one list
+- print the total number of posts and the first and last posts
+- practice checking response status codes and parsing JSON data
 
 ## Notes
 
