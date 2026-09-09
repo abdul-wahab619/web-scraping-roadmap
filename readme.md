@@ -2,6 +2,20 @@
 
 A simple learning roadmap for practicing Python web scraping step by step.
 
+## Progress So Far
+
+- Day 1 -> HTTP + HTML fundamentals       [Done]
+- Day 2 -> requests + BeautifulSoup       [Done]
+- Day 3 -> Pagination + cleaning           [Done]
+- Day 4 -> JSON/CSV + errors               [Done]
+- Day 5 -> Detail pages + resilience       [Done]
+- Day 6 -> APIs + API discovery            [Done]
+- Day 7 -> Robust API scraper              [Done]
+- Day 8 -> Headers + cookies + sessions    [Done]
+- Day 9 -> Playwright fundamentals         [Done]
+- Day 10 -> Advanced Playwright            [Done]
+- Day 11 -> Scrapy                          [Next]
+
 ## Progress
 
 ### Day 1
@@ -74,6 +88,15 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Saving Playwright results to JSON and CSV files
 - Calculating the average price of collected books
 
+### Day 10 - Advanced Playwright
+- Automating login forms with `fill()` and role-based locators
+- Waiting for navigation and confirming successful login messages
+- Automating infinite-scroll pages
+- Scrolling elements into view to load more content
+- Waiting for new content with `wait_for_function()`
+- Extracting only newly loaded content after each scroll
+- Limiting scroll attempts and stopping when no new content appears
+
 ## Project Structure
 
 ```text
@@ -110,6 +133,9 @@ web-scraping-roadmap/
 │   ├── 02_playwright.py
 │   ├── books_playwright.csv
 │   └── books_playwright.json
+├── Day10/
+│   ├── infinite-scrolling.py
+│   └── scrap-pwrite.py
 ├── readme.md
 └── .gitignore
 ```
@@ -218,6 +244,26 @@ python Day9\02_playwright.py
 - collect each book's title, price, rating, and URL
 - save the collected data to `Day9/books_playwright.json` and `Day9/books_playwright.csv`
 - calculate and print the average book price
+
+## Run Day 10 Scripts
+
+```bash
+python Day10\scrap-pwrite.py
+python Day10\infinite-scrolling.py
+```
+
+## What the Day 10 Scripts Do
+
+- open a login page and submit valid username and password credentials
+- verify the redirected URL and visible success message
+- open an infinite-scroll page and collect dynamically loaded paragraphs
+- wait for new content after each scroll
+- print the number of collected paragraphs and scrolls performed
+- display the first three collected paragraphs
+
+## Day 11
+
+Scrapy is the next planned topic in the roadmap.
 
 ## Notes
 
