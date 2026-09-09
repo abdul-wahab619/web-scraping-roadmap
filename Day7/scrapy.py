@@ -1,5 +1,7 @@
 import requests
 import time
+import json
+import csv
 
 url = "https://dummyjson.com/products"
 
@@ -40,7 +42,11 @@ def scrape_products(limit=20):
     skip = 0
     all_products = []
 
+    max_pages = 100
+    page_count = 0
+
     while True:
+
         params = {"limit": limit, "skip": skip}
 
         response = get_page(url, params=params)
@@ -51,7 +57,17 @@ def scrape_products(limit=20):
         print("Scraping products page:", response.url)
 
         data = response.json()
-        products = data["products"]
+
+        products = data.get("products")
+
+        if not isinstance(products, list):
+            print("Invalid products data. Stopping.")
+            break
+
+        if not products:
+            print("No products returned. Stopping.")
+            break
+
         all_products.extend(products)
 
         print(f"Fetched {len(products)} products | " f"skip={skip}")
@@ -59,6 +75,12 @@ def scrape_products(limit=20):
         skip += limit
 
         if len(all_products) >= data["total"]:
+            break
+
+        page_count += 1
+
+        if page_count >= max_pages:
+            print("Reached maximum number of pages. Stopping.")
             break
 
     return all_products
@@ -69,3 +91,17 @@ products = scrape_products(limit=20)
 print("Total products collected:", len(products))
 print("First product:", products[0])
 print("Last product:", products[-1])
+
+with open("products.json", "w", encoding="utf-8") as file:
+    json.dump(products, file, indent=4, ensure_ascii=False)
+
+with open("products.csv", "w", newline="", encoding="utf-8") as csvfile:
+    fieldnames = products[0].keys()
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+    writer.writeheader()
+    writer.writerows(products)
+
+
+print("Saved products.json")
+print("Saved products.csv")
