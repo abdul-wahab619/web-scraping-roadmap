@@ -5,58 +5,46 @@ rating_map = {"One": 1, "Two": 2, "Three": 3, "Four": 4, "Five": 5}
 
 
 class BooksSpider(scrapy.Spider):
+
     name = "books"
     allowed_domains = ["books.toscrape.com"]
-    start_urls = ["https://books.toscrape.com"]
+    start_urls = ["https://books.toscrape.com/"]
 
     def parse(self, response):
 
         books = response.xpath(".//article[contains(@class, 'product_pod')]")
-        print(f"Found {len(books)} books on the page.")
 
         for book in books:
-            title = book.xpath(".//h3/a/@title").get()
+            detail_url = book.xpath(".//h3/a/@href").get()
 
-            price_text = book.xpath(
-                ".//p[contains(@class, 'price_color')]/text()"
-            ).get()
+            if detail_url:
+                yield response.follow(detail_url, callback=self.parse_detail)
 
-            price = price_text.strip() if price_text else None
-
-            rating_class = book.xpath(
-                ".//p[contains(@class, 'star-rating')]/@class"
-            ).get()
-
-            rating_name = rating_class.split()[-1] if rating_class else None
-
-            rating = rating_map.get(rating_name) if rating_name else None
-
-            relative_url = book.xpath(".//h3/a/@href").get()
-            url = response.urljoin(relative_url)
-
-            yield scrapy.Request(
-                url,
-                callback=self.parse_detail,
-                meta={
-                    "title": title,
-                    "price": price,
-                    "rating": rating,
-                    "url": url,
-                },
-            )
-
+        # 4. Find next page
         next_page = response.xpath("//li[@class='next']/a/@href").get()
 
+        # 5. Follow next page
         if next_page:
-            next_page_url = response.urljoin(next_page)
-
-            yield scrapy.Request(next_page_url, callback=self.parse)
+            yield response.follow(next_page, callback=self.parse)
 
     def parse_detail(self, response):
-        title = response.meta["title"]
-        price = response.meta["price"]
-        rating = response.meta["rating"]
-        url = response.meta["url"]
+
+        title = response.xpath(
+            "//div[contains(@class, 'product_main')]/h1/text()"
+        ).get()
+
+        price = response.xpath(
+            "//div[contains(@class, 'product_main')]//p[contains(@class, 'price_color')]/text()"
+        ).get()
+
+        rating_class = response.xpath(
+            "//div[contains(@class, 'product_main')]//p[contains(@class, 'star-rating')]/@class"
+        ).get()
+
+        rating_name = rating_class.split()[-1] if rating_class else None
+        rating = rating_map.get(rating_name) if rating_name else None
+
+        url = response.url
 
         # Detail-page fields will be extracted here
         upc = response.xpath("//th[text()='UPC']/following-sibling::td/text()").get()
