@@ -16,6 +16,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 10 -> Advanced Playwright            [Done]
 - Day 11 -> Scrapy                          [Done]
 - Day 12 -> Scrapy item pipelines          [Done]
+- Day 13 -> Data validation + export      [Done]
 
 ## Progress
 
@@ -113,6 +114,15 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Cleaning and normalizing scraped values in a Scrapy item pipeline
 - Converting price and review fields into numeric types for easier analysis
 - Saving the richer dataset to JSON for later inspection and reporting
+
+### Day 13 - Data cleaning, validation, and export
+- Passing scraped items through a `BookcrawlerPipeline` for cleaning
+- Stripping whitespace and normalizing string fields in the pipeline
+- Converting price fields to `float` values for consistent numeric analysis
+- Converting review counts to `int` values for downstream filtering
+- Validating required fields, price ranges, and review values with `BookValidationPipeline`
+- Dropping duplicate books by UPC using a `DuplicateBookPipeline`
+- Exporting the final cleaned dataset to JSON for analysis and reporting
 
 ## Project Structure
 
@@ -338,6 +348,30 @@ scrapy crawl books -o books_pipeline.json
 - pass each item through the pipeline to strip text and convert numeric values
 - write the final structured results to `books_pipeline.json`
 - preserve a richer dataset than the base listing-only scraper
+
+## Day 13 - Data cleaning, validation, and export
+
+- the spider yields raw book items from the listing and detail pages
+- `BookcrawlerPipeline` cleans strings and converts price/review values
+- `BookValidationPipeline` ensures required fields and sensible numeric values exist
+- `DuplicateBookPipeline` tracks UPCs and skips repeated books
+- the cleaned dataset is exported as a final JSON file for analysis
+
+## Run Day 13 Script
+
+```bash
+cd scrapy_projects\bookcrawler
+scrapy crawl books -o books_pipeline.json
+```
+
+## What the Day 13 Script Does
+
+- runs the spider end-to-end from list page to detail page
+- sends each scraped item through the cleaning pipeline
+- validates fields before accepting the item for export
+- removes duplicate books using UPC tracking
+- writes the final validated dataset to `books_pipeline.json`
+- prepares the data for later analysis and reporting
 
 ## Notes
 
