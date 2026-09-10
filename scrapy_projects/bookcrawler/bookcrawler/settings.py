@@ -59,7 +59,9 @@ DOWNLOAD_DELAY = 1
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    "bookcrawler.pipelines.BookcrawlerPipeline": 300,
+    "bookcrawler.pipelines.BookcrawlerPipeline": 100,
+    "bookcrawler.pipelines.BookValidationPipeline": 200,
+    "bookcrawler.pipelines.DuplicateBookPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
