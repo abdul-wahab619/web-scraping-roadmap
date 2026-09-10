@@ -15,6 +15,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 9 -> Playwright fundamentals         [Done]
 - Day 10 -> Advanced Playwright            [Done]
 - Day 11 -> Scrapy                          [Done]
+- Day 12 -> Scrapy item pipelines          [Done]
 
 ## Progress
 
@@ -96,6 +97,22 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Waiting for new content with `wait_for_function()`
 - Extracting only newly loaded content after each scroll
 - Limiting scroll attempts and stopping when no new content appears
+
+### Day 11 - Scrapy
+- Creating a Scrapy project with `scrapy startproject`
+- Defining a `BookcrawlerItem` for structured data
+- Building a spider that scrapes `books.toscrape.com`
+- Extracting title, price, rating, and URL with XPath selectors
+- Following pagination through the Next link
+- Running the spider with `scrapy crawl books`
+
+### Day 12 - Scrapy detail pages and item pipelines
+- Following each book's detail page from the listing page
+- Extracting book metadata such as UPC, product type, tax, and availability
+- Pulling description and review counts from the product detail view
+- Cleaning and normalizing scraped values in a Scrapy item pipeline
+- Converting price and review fields into numeric types for easier analysis
+- Saving the richer dataset to JSON for later inspection and reporting
 
 ## Project Structure
 
@@ -298,6 +315,29 @@ scrapy crawl books
 - follow the "next" page link until the end of the catalog
 - yield structured data via a Scrapy item object
 - print a count of books found on each page during the crawl
+
+## Day 12 - Scrapy detail pages and pipelines
+
+- navigate from each listing item to the product details page
+- capture richer fields like UPC, product type, tax, availability, and review count
+- clean string values and convert money values to floats in the pipeline
+- normalize review totals into integers for downstream analysis
+- save the expanded Scrapy output as structured JSON data
+
+## Run Day 12 Script
+
+```bash
+cd scrapy_projects\bookcrawler
+scrapy crawl books -o books_pipeline.json
+```
+
+## What the Day 12 Script Does
+
+- first scrape the book listing pages and collect the core item fields
+- then follow each book to its detail page for extra metadata
+- pass each item through the pipeline to strip text and convert numeric values
+- write the final structured results to `books_pipeline.json`
+- preserve a richer dataset than the base listing-only scraper
 
 ## Notes
 
