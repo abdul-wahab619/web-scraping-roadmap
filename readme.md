@@ -14,7 +14,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 8 -> Headers + cookies + sessions    [Done]
 - Day 9 -> Playwright fundamentals         [Done]
 - Day 10 -> Advanced Playwright            [Done]
-- Day 11 -> Scrapy                          [Next]
+- Day 11 -> Scrapy                          [Done]
 
 ## Progress
 
@@ -136,6 +136,18 @@ web-scraping-roadmap/
 ├── Day10/
 │   ├── infinite-scrolling.py
 │   └── scrap-pwrite.py
+├── scrapy_projects/
+│   └── bookcrawler/
+│       ├── scrapy.cfg
+│       └── bookcrawler/
+│           ├── __init__.py
+│           ├── items.py
+│           ├── middlewares.py
+│           ├── pipelines.py
+│           ├── settings.py
+│           └── spiders/
+│               ├── __init__.py
+│               └── books.py
 ├── readme.md
 └── .gitignore
 ```
@@ -150,6 +162,8 @@ web-scraping-roadmap/
 - JSON and CSV file handling
 - HTTP sessions, headers, parameters, and cookies
 - Playwright browser automation
+- Scrapy
+- XPath selectors and item pipelines
 
 ## Example Source
 
@@ -261,9 +275,29 @@ python Day10\infinite-scrolling.py
 - print the number of collected paragraphs and scrolls performed
 - display the first three collected paragraphs
 
-## Day 11
+## Day 11 - Scrapy
 
-Scrapy is the next planned topic in the roadmap.
+- Creating a Scrapy project with `scrapy startproject`
+- Defining a `BookcrawlerItem` for structured data
+- Building a spider that scrapes `books.toscrape.com`
+- Extracting title, price, rating, and URL with XPath selectors
+- Following pagination through the Next link
+- Running the spider with `scrapy crawl books`
+
+## Run Day 11 Script
+
+```bash
+cd scrapy_projects\bookcrawler
+scrapy crawl books
+```
+
+## What the Day 11 Script Does
+
+- crawl the Books to Scrape homepage and all paginated listing pages
+- select book cards with XPath and collect item fields
+- follow the "next" page link until the end of the catalog
+- yield structured data via a Scrapy item object
+- print a count of books found on each page during the crawl
 
 ## Notes
 
