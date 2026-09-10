@@ -17,6 +17,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 11 -> Scrapy                          [Done]
 - Day 12 -> Scrapy item pipelines          [Done]
 - Day 13 -> Data validation + export      [Done]
+- Day 14 -> Scrapy callback passing        [Done]
 
 ## Progress
 
@@ -123,6 +124,13 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Validating required fields, price ranges, and review values with `BookValidationPipeline`
 - Dropping duplicate books by UPC using a `DuplicateBookPipeline`
 - Exporting the final cleaned dataset to JSON for analysis and reporting
+
+### Day 14 - Scrapy callback passing patterns
+- Learning how to follow links with `response.follow()`
+- Passing metadata between requests with `meta`
+- Passing callback arguments explicitly with `cb_kwargs`
+- Understanding the flow from listing page to detail URL to authoritative extraction
+- Recognizing the architectural pattern of discovery followed by item extraction
 
 ## Project Structure
 
@@ -372,6 +380,50 @@ scrapy crawl books -o books_pipeline.json
 - removes duplicate books using UPC tracking
 - writes the final validated dataset to `books_pipeline.json`
 - prepares the data for later analysis and reporting
+
+## Day 14 - Scrapy callback passing patterns
+
+### `response.follow()`
+
+For following links:
+
+```python
+yield response.follow(url, callback=self.parse_detail)
+```
+
+### `meta`
+
+For request/response metadata:
+
+```python
+meta={"some_data": value}
+```
+
+### `cb_kwargs`
+
+For explicitly passing callback arguments:
+
+```python
+cb_kwargs={"title": title}
+```
+
+And you've learned the important architectural distinction:
+
+```text
+Listing page
+    ↓
+Discovery / navigation
+    ↓
+Detail URL
+    ↓
+Detail page
+    ↓
+Authoritative extraction
+    ↓
+Item
+```
+
+This is a solid Scrapy pattern for structured detail-page scraping.
 
 ## Notes
 
