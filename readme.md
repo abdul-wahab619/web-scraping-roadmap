@@ -18,6 +18,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 12 -> Scrapy item pipelines          [Done]
 - Day 13 -> Data validation + export      [Done]
 - Day 14 -> Scrapy callback passing        [Done]
+- Day 15 -> Concurrency, Retry & Middleware [Done]
 
 ## Progress
 
@@ -131,6 +132,14 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Passing callback arguments explicitly with `cb_kwargs`
 - Understanding the flow from listing page to detail URL to authoritative extraction
 - Recognizing the architectural pattern of discovery followed by item extraction
+
+### Day 15 - Concurrency, Retry & Middleware
+- Learning how Scrapy schedules multiple requests at once
+- Understanding concurrency settings and the effect of parallel requests
+- Handling temporary failures with retry policies and backoff behavior
+- Using downloader and spider middleware to customize request processing
+- Adding custom logic between request creation and response handling
+- Improving robustness when crawling larger sites or handling flaky connections
 
 ## Project Structure
 
@@ -424,6 +433,28 @@ Item
 ```
 
 This is a solid Scrapy pattern for structured detail-page scraping.
+
+## Day 15: Concurrency, Retry & Middleware
+
+- Scrapy can send many requests in parallel to improve crawl speed
+- concurrency settings control how aggressively the spider requests pages
+- retries help recover from temporary network or server problems
+- middleware sits in the request/response pipeline and can modify behavior globally
+- this is important for resilience, rate control, and custom request handling
+
+## Run Day 15 Example
+
+```bash
+cd scrapy_projects\bookcrawler
+scrapy crawl books
+```
+
+## What the Day 15 Topic Covers
+
+- how Scrapy handles concurrency during a crawl
+- what retry behavior looks like for failed requests
+- where middleware fits in the request lifecycle
+- how to make crawlers more stable and production-ready for real-world sites
 
 ## Notes
 
