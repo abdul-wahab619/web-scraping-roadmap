@@ -66,35 +66,28 @@ class BookcrawlerDownloaderMiddleware:
         return s
 
     def process_request(self, request, spider):
-        # Called for each request that goes through the downloader
-        # middleware.
+        request.headers["User-Agent"] = "BookCrawler/1.0"
+        request.headers["Accept"] = "text/html,application/xhtml+xml"
+        request.headers["Accept-Language"] = "en-US,en;q=0.9"
 
-        # Must either:
-        # - return None: continue processing this request
-        # - or return a Response object
-        # - or return a Request object
-        # - or raise IgnoreRequest: process_exception() methods of
-        #   installed downloader middleware will be called
+        print(f"METHOD: {request.method} | URL: {request.url}")
+        print(f"USER-AGENT: {request.headers['User-Agent']}")
+
         return None
 
     def process_response(self, request, response, spider):
-        # Called with the response returned from the downloader.
+        if response.status == 200:
+            print(f"SUCCESS: {response.status} | {response.url}")
 
-        # Must either;
-        # - return a Response object
-        # - return a Request object
-        # - or raise IgnoreRequest
+        else:
+            print(f"FAILED: {response.status} | {response.url}")
+
         return response
 
     def process_exception(self, request, exception, spider):
-        # Called when a download handler or a process_request()
-        # (from other downloader middleware) raises an exception.
+        print(f"EXCEPTION: {type(exception).__name__} | " f"URL: {request.url}")
 
-        # Must either:
-        # - return None: continue processing this exception
-        # - return a Response object: stops process_exception() chain
-        # - return a Request object: stops process_exception() chain
-        pass
+        return None
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
