@@ -65,7 +65,7 @@ class BookcrawlerDownloaderMiddleware:
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
         return s
 
-    def process_request(self, request, spider):
+    def process_request(self, request):
         request.headers["User-Agent"] = "BookCrawler/1.0"
         request.headers["Accept"] = "text/html,application/xhtml+xml"
         request.headers["Accept-Language"] = "en-US,en;q=0.9"
@@ -75,7 +75,7 @@ class BookcrawlerDownloaderMiddleware:
 
         return None
 
-    def process_response(self, request, response, spider):
+    def process_response(self, request, response):
         if response.status == 200:
             print(f"SUCCESS: {response.status} | {response.url}")
 
@@ -84,7 +84,7 @@ class BookcrawlerDownloaderMiddleware:
 
         return response
 
-    def process_exception(self, request, exception, spider):
+    def process_exception(self, request, exception):
         print(f"EXCEPTION: {type(exception).__name__} | " f"URL: {request.url}")
 
         return None
