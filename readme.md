@@ -19,6 +19,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 13 -> Data validation + export      [Done]
 - Day 14 -> Scrapy callback passing        [Done]
 - Day 15 -> Concurrency, Retry & Middleware [Done]
+- Day 16 -> Authentication & session handling [Done]
 
 ## Progress
 
@@ -140,6 +141,13 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Using downloader and spider middleware to customize request processing
 - Adding custom logic between request creation and response handling
 - Improving robustness when crawling larger sites or handling flaky connections
+
+### Day 16 - Authentication & session handling
+- Managing cookies manually and preserving cookies across requests
+- Using basic authentication credentials securely through a `.env` file
+- Submitting POST forms with `FormRequest`
+- Extracting and sending CSRF tokens with authenticated requests
+- Logging in with a session and accessing authenticated pages
 
 ## Project Structure
 
