@@ -86,7 +86,6 @@ class BookcrawlerDownloaderMiddleware:
 
     def process_exception(self, request, exception):
         print(f"EXCEPTION: {type(exception).__name__} | " f"URL: {request.url}")
-
         return None
 
     def spider_opened(self, spider):

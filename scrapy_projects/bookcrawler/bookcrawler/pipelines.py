@@ -64,6 +64,31 @@ class BookValidationPipeline:
         if price is not None and price < 0:
             raise DropItem(f"Invalid price: {price}")
 
+        price_excl_tax = adapter.get("price_excl_tax")
+
+        if price_excl_tax is not None and price_excl_tax < 0:
+            raise DropItem(f"Invalid price_excl_tax: {price_excl_tax}")
+
+        price_incl_tax = adapter.get("price_incl_tax")
+
+        if price_incl_tax is not None and price_incl_tax < 0:
+            raise DropItem(f"Invalid price_incl_tax: {price_incl_tax}")
+
+        if (
+            price_excl_tax is not None
+            and price_incl_tax is not None
+            and price_incl_tax < price_excl_tax
+        ):
+            raise DropItem(
+                f"Invalid price relationship: "
+                f"incl={price_incl_tax}, excl={price_excl_tax}"
+            )
+
+        tax = adapter.get("tax")
+
+        if tax is not None and tax < 0:
+            raise DropItem(f"Invalid tax: {tax}")
+
         # Validate rating
         rating = adapter.get("rating")
 
