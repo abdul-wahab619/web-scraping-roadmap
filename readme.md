@@ -21,6 +21,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 15 -> Concurrency, Retry & Middleware [Done]
 - Day 16 -> Authentication & session handling [Done]
 - Day 17 -> Advanced XPath selectors       [Done]
+- Day 18 -> Robustness & monitoring        [Done]
 
 ## Progress
 
@@ -153,6 +154,16 @@ A simple learning roadmap for practicing Python web scraping step by step.
 ### Day 17 - Advanced XPath selectors
 - Building XPath selectors for fairly messy real-world pages
 - practice `scrapy shell "https://books.toscrape.com/"`
+
+### Day 18 - Robustness & monitoring
+- Handling HTTP failures and network failures
+- Managing request timeouts and retries
+- Using errbacks for failed requests
+- Parsing responses safely and detecting missing fields
+- Validating scraped data before processing it
+- Tracking crawler-level counters
+- Using Scrapy signals and extensions
+- Reporting crawl statistics and results
 
 ## Project Structure
 
