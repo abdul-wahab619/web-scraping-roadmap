@@ -20,6 +20,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 14 -> Scrapy callback passing        [Done]
 - Day 15 -> Concurrency, Retry & Middleware [Done]
 - Day 16 -> Authentication & session handling [Done]
+- Day 17 -> Advanced XPath selectors       [Done]
 
 ## Progress
 
@@ -148,6 +149,10 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Submitting POST forms with `FormRequest`
 - Extracting and sending CSRF tokens with authenticated requests
 - Logging in with a session and accessing authenticated pages
+
+### Day 17 - Advanced XPath selectors
+- Building XPath selectors for fairly messy real-world pages
+- practice `scrapy shell "https://books.toscrape.com/"`
 
 ## Project Structure
 
