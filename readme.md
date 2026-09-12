@@ -23,6 +23,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 17 -> Advanced XPath selectors       [Done]
 - Day 18 -> Robustness & monitoring        [Done]
 - Day 19 -> AutoThrottle & adaptive concurrency [Done]
+- Day 20 -> Data quality monitoring        [Done]
 
 ## Progress
 
@@ -173,6 +174,13 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Using AutoThrottle for dynamic request throttling
 - Setting the desired concurrency level with `AUTOTHROTTLE_TARGET_CONCURRENCY`
 - Configuring the maximum adaptive delay with `AUTOTHROTTLE_MAX_DELAY`
+
+### Day 20 - Data quality monitoring
+- Cleaning scraped values and converting them to the correct types
+- Validating required fields and acceptable value ranges
+- Detecting and removing duplicate records
+- Monitoring data-quality results across the pipeline
+- Producing a clean dataset ready for analysis and export
 
 ## Project Structure
 
