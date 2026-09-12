@@ -30,6 +30,13 @@ RETRY_ENABLED = True
 RETRY_TIMES = 3
 RETRY_HTTP_CODES = [408, 500, 502, 503, 504]
 
+# Download Handlers
+DOWNLOAD_HANDLERS = {
+    "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
+    "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
+}
+TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+
 # Disable cookies (enabled by default)
 # COOKIES_ENABLED = False
 
@@ -65,11 +72,11 @@ EXTENSIONS = {
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-    "bookcrawler.pipelines.BookcrawlerPipeline": 100,
-    "bookcrawler.pipelines.BookValidationPipeline": 200,
-    "bookcrawler.pipelines.DuplicateBookPipeline": 300,
-}
+# ITEM_PIPELINES = {
+#     "bookcrawler.pipelines.BookcrawlerPipeline": 100,
+#     "bookcrawler.pipelines.BookValidationPipeline": 200,
+#     "bookcrawler.pipelines.DuplicateBookPipeline": 300,
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

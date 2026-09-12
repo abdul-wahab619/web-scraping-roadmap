@@ -24,6 +24,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 18 -> Robustness & monitoring        [Done]
 - Day 19 -> AutoThrottle & adaptive concurrency [Done]
 - Day 20 -> Data quality monitoring        [Done]
+- Day 21 -> Scrapy + Playwright integration [Done]
 
 ## Progress
 
@@ -181,6 +182,14 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Detecting and removing duplicate records
 - Monitoring data-quality results across the pipeline
 - Producing a clean dataset ready for analysis and export
+
+### Day 21 - Scrapy + Playwright integration
+- Launching Chromium successfully from a Scrapy spider
+- Loading JavaScript-rendered pages with Playwright
+- Extracting 10 quotes from dynamic content
+- Dropping 0 items during data-quality processing
+- Achieving 100% data quality
+- Exporting the clean results to `quotes.json`
 
 ## Project Structure
 

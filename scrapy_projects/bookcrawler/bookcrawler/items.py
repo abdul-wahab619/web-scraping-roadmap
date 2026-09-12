@@ -7,6 +7,12 @@ from dataclasses import dataclass
 
 
 @dataclass
+class QuoteItem:
+    text: str | None = None
+    author: str | None = None
+
+
+@dataclass
 class BookcrawlerItem:
     title: str | None = None
     price: float | None = None
