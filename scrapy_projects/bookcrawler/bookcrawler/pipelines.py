@@ -2,6 +2,93 @@ from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 from urllib.parse import urlparse
 from bookcrawler.items import BookcrawlerItem, QuoteItem
+import os
+
+import psycopg
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+class PostgreSQLPipeline:
+
+    def open_spider(self):
+        self.connection = psycopg.connect(
+            host=os.getenv("POSTGRES_HOST"),
+            port=os.getenv("POSTGRES_PORT"),
+            dbname=os.getenv("POSTGRES_DB"),
+            user=os.getenv("POSTGRES_USER"),
+            password=os.getenv("POSTGRES_PASSWORD"),
+        )
+
+        self.cursor = self.connection.cursor()
+
+        print("PostgreSQL connection established")
+
+    def process_item(self, item):
+
+        if not isinstance(item, BookcrawlerItem):
+            return item
+
+        self.cursor.execute(
+            """
+            INSERT INTO books (
+                title,
+                price,
+                rating,
+                url,
+                upc,
+                product_type,
+                price_excl_tax,
+                price_incl_tax,
+                tax,
+                availability,
+                number_of_reviews,
+                description
+            )
+            VALUES (
+                %s, %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s, %s
+            )
+            ON CONFLICT (upc)
+            DO UPDATE SET
+                title = EXCLUDED.title,
+                price = EXCLUDED.price,
+                rating = EXCLUDED.rating,
+                url = EXCLUDED.url,
+                product_type = EXCLUDED.product_type,
+                price_excl_tax = EXCLUDED.price_excl_tax,
+                price_incl_tax = EXCLUDED.price_incl_tax,
+                tax = EXCLUDED.tax,
+                availability = EXCLUDED.availability,
+                number_of_reviews = EXCLUDED.number_of_reviews,
+                description = EXCLUDED.description
+            """,
+            (
+                item.title,
+                item.price,
+                item.rating,
+                item.url,
+                item.upc,
+                item.product_type,
+                item.price_excl_tax,
+                item.price_incl_tax,
+                item.tax,
+                item.availability,
+                item.number_of_reviews,
+                item.description,
+            ),
+        )
+
+        self.connection.commit()
+
+        return item
+
+    def close_spider(self):
+        self.cursor.close()
+        self.connection.close()
+
+        print("PostgreSQL connection closed")
 
 
 def is_valid_url(value):

@@ -77,6 +77,7 @@ ITEM_PIPELINES = {
     "bookcrawler.pipelines.BookValidationPipeline": 200,
     "bookcrawler.pipelines.DuplicateBookPipeline": 300,
     "bookcrawler.pipelines.QuoteValidationPipeline": 400,
+    "bookcrawler.pipelines.PostgreSQLPipeline": 500,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

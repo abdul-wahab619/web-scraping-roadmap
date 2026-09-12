@@ -26,6 +26,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 20 -> Data quality monitoring        [Done]
 - Day 21 -> Scrapy + Playwright integration [Done]
 - Day 22 -> Production scraping architecture [Done]
+- Day 23 -> PostgreSQL persistence layer   [Done]
 
 ## Progress
 
@@ -200,6 +201,17 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Layering cleaning, validation, duplicate detection, and quote validation pipelines
 - Monitoring crawl events, dropped items, drop reasons, and data-quality scores
 - Building a maintainable architecture ready for production scraping workloads
+
+### Day 23 - PostgreSQL persistence layer
+- Designing a PostgreSQL schema with constraints
+- Integrating Scrapy with PostgreSQL for persistent storage
+- Using parameterized SQL statements safely
+- Managing database transactions with `commit()`
+- Enforcing uniqueness with a `UNIQUE` UPC constraint
+- Protecting against duplicates with PostgreSQL UPSERT operations
+- Supporting repeated and idempotent crawls
+- Validating data before persistence
+- Loading database credentials from environment variables
 
 ## Project Structure
 
