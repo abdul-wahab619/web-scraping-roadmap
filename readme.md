@@ -22,6 +22,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 16 -> Authentication & session handling [Done]
 - Day 17 -> Advanced XPath selectors       [Done]
 - Day 18 -> Robustness & monitoring        [Done]
+- Day 19 -> AutoThrottle & adaptive concurrency [Done]
 
 ## Progress
 
@@ -164,6 +165,14 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Tracking crawler-level counters
 - Using Scrapy signals and extensions
 - Reporting crawl statistics and results
+
+### Day 19 - AutoThrottle & adaptive concurrency
+- Understanding global concurrency with `CONCURRENT_REQUESTS`
+- Limiting per-domain concurrency with `CONCURRENT_REQUESTS_PER_DOMAIN`
+- Applying a fixed request delay with `DOWNLOAD_DELAY`
+- Using AutoThrottle for dynamic request throttling
+- Setting the desired concurrency level with `AUTOTHROTTLE_TARGET_CONCURRENCY`
+- Configuring the maximum adaptive delay with `AUTOTHROTTLE_MAX_DELAY`
 
 ## Project Structure
 
