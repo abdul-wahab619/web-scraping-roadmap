@@ -25,6 +25,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 19 -> AutoThrottle & adaptive concurrency [Done]
 - Day 20 -> Data quality monitoring        [Done]
 - Day 21 -> Scrapy + Playwright integration [Done]
+- Day 22 -> Production scraping architecture [Done]
 
 ## Progress
 
@@ -190,6 +191,15 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Dropping 0 items during data-quality processing
 - Achieving 100% data quality
 - Exporting the clean results to `quotes.json`
+
+### Day 22 - Production scraping architecture
+- Separating spiders, items, pipelines, middleware, extensions, and settings
+- Configuring Playwright as Scrapy's download handler for dynamic pages
+- Using the asyncio reactor to support Scrapy and Playwright together
+- Centralizing retries, timeouts, concurrency, and AutoThrottle settings
+- Layering cleaning, validation, duplicate detection, and quote validation pipelines
+- Monitoring crawl events, dropped items, drop reasons, and data-quality scores
+- Building a maintainable architecture ready for production scraping workloads
 
 ## Project Structure
 

@@ -1,6 +1,7 @@
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 from urllib.parse import urlparse
+from bookcrawler.items import BookcrawlerItem, QuoteItem
 
 
 def is_valid_url(value):
@@ -18,6 +19,8 @@ def is_number(value):
 
 class BookcrawlerPipeline:
     def process_item(self, item):
+        if not isinstance(item, BookcrawlerItem):
+            return item
         adapter = ItemAdapter(item)
 
         # Clean string fields
@@ -54,7 +57,12 @@ class BookcrawlerPipeline:
 
 
 class BookValidationPipeline:
+
     def process_item(self, item):
+
+        if not isinstance(item, BookcrawlerItem):
+            return item
+
         adapter = ItemAdapter(item)
 
         # --------------------------------
@@ -194,6 +202,9 @@ class DuplicateBookPipeline:
 
     def process_item(self, item):
 
+        if not isinstance(item, BookcrawlerItem):
+            return item
+
         adapter = ItemAdapter(item)
 
         upc = adapter.get("upc")
@@ -231,3 +242,19 @@ class DataQualityPipeline:
             )
 
         spider.logger.info("========================================")
+
+
+class QuoteValidationPipeline:
+
+    def process_item(self, item):
+
+        if not isinstance(item, QuoteItem):
+            return item
+
+        if not item.text:
+            raise DropItem("Missing quote text")
+
+        if not item.author:
+            raise DropItem("Missing quote author")
+
+        return item
