@@ -1,6 +1,9 @@
 from fastapi import FastAPI, Query, HTTPException
 from database import get_connection
 from schemas import BooksResponse, Book
+from redis_client import redis_client
+from datetime import datetime, timezone
+import uuid
 
 app = FastAPI(
     title="BookCrawler API",
@@ -34,6 +37,49 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/redis/health")
+def redis_health():
+    redis_client.set("test_key", "Redis is working")
+    value = redis_client.get("test_key")
+    return {
+        "status": "ok",
+        "value": value,
+    }
+
+
+@app.post("/scrape")
+def create_scrape_job():
+    job_id = str(uuid.uuid4())
+
+    job_key = f"scrape_job:{job_id}"
+    created_at = datetime.now(timezone.utc).isoformat()
+
+    redis_client.hset(
+        job_key,
+        mapping={"job_id": job_id, "status": "queued", "created_at": created_at},
+    )
+    redis_client.lpush("scrape_queue", job_id)
+    return {
+        "job_id": job_id,
+        "status": "queued",
+    }
+
+
+@app.get("/scrape/{job_id}")
+def get_scrape_job(job_id: str):
+    job_key = f"scrape_job:{job_id}"
+
+    job = redis_client.hgetall(job_key)
+
+    if not job:
+        raise HTTPException(
+            status_code=404,
+            detail="Scrape job not found",
+        )
+
+    return job
 
 
 @app.get("/books/count")

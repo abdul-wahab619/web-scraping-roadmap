@@ -28,6 +28,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 22 -> Production scraping architecture [Done]
 - Day 23 -> PostgreSQL persistence layer   [Done]
 - Day 24 -> FastAPI + Scraping Backend     [Done]
+- Day 25 -> Background scraping job system [Done]
 
 ## Progress
 
@@ -225,6 +226,34 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Handling invalid price ranges and missing books with HTTP errors
 - Converting database rows into reusable API response objects
 - Returning structured book responses with `BooksResponse` and `Book` schemas
+
+### Day 25: Background Scraping Job System
+- Running Redis in Docker and connecting with the Redis Python client
+- Creating a `scrape_queue` with `LPUSH` and `BRPOP`
+- Creating scrape jobs with a unique `job_id` and `queued` status
+- Running a continuously listening background worker
+- Executing Scrapy separately from the FastAPI application
+- Connecting the complete FastAPI -> Worker -> Scrapy -> PostgreSQL workflow
+- Tracking job statuses: `queued`, `running`, `completed`, `failed`, and `retrying`
+- Recording `created_at`, `started_at`, `completed_at`, and `failed_at` timestamps
+- Measuring each attempt with `duration_seconds`
+- Storing failure messages in Redis for job inspection
+- Retrying failed jobs with an attempt counter and `MAX_RETRIES`
+- Recalculating `started_at` and `duration_seconds` for every retry attempt
+
+### FastAPI -> Worker -> Scrapy
+
+```text
+POST /scrape
+      |
+    Redis
+      |
+    Worker
+      |
+    Scrapy
+      |
+ PostgreSQL
+```
 
 ## Project Structure
 
