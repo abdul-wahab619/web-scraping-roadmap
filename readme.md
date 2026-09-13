@@ -27,6 +27,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 21 -> Scrapy + Playwright integration [Done]
 - Day 22 -> Production scraping architecture [Done]
 - Day 23 -> PostgreSQL persistence layer   [Done]
+- Day 24 -> FastAPI + Scraping Backend     [Done]
 
 ## Progress
 
@@ -212,6 +213,18 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Supporting repeated and idempotent crawls
 - Validating data before persistence
 - Loading database credentials from environment variables
+
+### Day 24: FastAPI + Scraping Backend
+- Building a FastAPI backend for the scraped book data
+- Connecting FastAPI to the PostgreSQL database
+- Creating health-check and book-count endpoints
+- Adding paginated book listing with `limit` and `offset`
+- Supporting title and description search with `ILIKE`
+- Filtering books by rating and price range
+- Validating query parameters with FastAPI and Pydantic
+- Handling invalid price ranges and missing books with HTTP errors
+- Converting database rows into reusable API response objects
+- Returning structured book responses with `BooksResponse` and `Book` schemas
 
 ## Project Structure
 
