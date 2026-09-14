@@ -29,6 +29,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 23 -> PostgreSQL persistence layer   [Done]
 - Day 24 -> FastAPI + Scraping Backend     [Done]
 - Day 25 -> Background scraping job system [Done]
+- Day 26 -> Scheduled crawling system       [Done]
 
 ## Progress
 
@@ -238,6 +239,20 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Recording `created_at`, `started_at`, `completed_at`, and `failed_at` timestamps
 - Measuring each attempt with `duration_seconds`
 - Storing failure messages in Redis for job inspection
+
+### Day 26: Scheduled Crawling System
+- Implementing scheduled crawling
+- Configuring runtime schedules through Redis
+- Separating the scheduler from the worker
+- Coordinating scheduled jobs with a Redis distributed lock
+- Applying lock TTLs to prevent stale locks
+- Preventing overlapping scheduled runs
+- Storing scheduled job metadata
+- Tracking `last_run_at` and `next_run_at`
+- Recovering from scheduler errors
+- Adding structured logging
+- Retrying failed jobs automatically in the worker
+- Tracking job timestamps and execution duration
 - Retrying failed jobs with an attempt counter and `MAX_RETRIES`
 - Recalculating `started_at` and `duration_seconds` for every retry attempt
 

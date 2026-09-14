@@ -65,6 +65,7 @@ def process_job(job_id):
         )
 
         print(f"Completed job: {job_id}")
+        redis_client.delete("scrape_scheduler_lock")
 
     except Exception as error:
         failed_at = datetime.now(timezone.utc).isoformat()
@@ -106,6 +107,7 @@ def process_job(job_id):
 
             print(f"Job failed permanently: {job_id}")
             print(f"Error: {error}")
+            redis_client.delete("scrape_scheduler_lock")
 
 
 def start_worker():
