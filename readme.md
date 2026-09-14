@@ -30,6 +30,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 24 -> FastAPI + Scraping Backend     [Done]
 - Day 25 -> Background scraping job system [Done]
 - Day 26 -> Scheduled crawling system       [Done]
+- Day 27 -> Job Listing Aggregator          [Done]
 
 ## Progress
 
@@ -255,6 +256,33 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Tracking job timestamps and execution duration
 - Retrying failed jobs with an attempt counter and `MAX_RETRIES`
 - Recalculating `started_at` and `duration_seconds` for every retry attempt
+
+### Day 27: Job Listing Aggregator
+- Scraping job listings from YC Jobs with Scrapy
+- Extracting structured `JobItem` records
+- Applying data-quality checks and processing items through pipelines
+- Persisting clean jobs in PostgreSQL
+- Enforcing `UNIQUE(source, external_id)` for source-level deduplication
+- Using PostgreSQL UPSERT to support repeatable crawls
+- Storing 16 clean job listings
+
+```text
+YC Jobs
+  ↓
+Scrapy
+  ↓
+Extract JobItem
+  ↓
+Data Quality / Pipelines
+  ↓
+PostgreSQL
+  ↓
+UNIQUE(source, external_id)
+  ↓
+UPSERT
+  ↓
+16 clean jobs
+```
 
 ### FastAPI -> Worker -> Scrapy
 

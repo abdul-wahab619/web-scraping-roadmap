@@ -66,9 +66,9 @@ class BookcrawlerDownloaderMiddleware:
         return s
 
     def process_request(self, request):
-        request.headers["User-Agent"] = "BookCrawler/1.0"
-        request.headers["Accept"] = "text/html,application/xhtml+xml"
-        request.headers["Accept-Language"] = "en-US,en;q=0.9"
+        # request.headers["User-Agent"] = "BookCrawler/1.0"
+        # request.headers["Accept"] = "text/html,application/xhtml+xml"
+        # request.headers["Accept-Language"] = "en-US,en;q=0.9"
 
         print(f"METHOD: {request.method} | URL: {request.url}")
         print(f"USER-AGENT: {request.headers['User-Agent']}")

@@ -1,7 +1,7 @@
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 from urllib.parse import urlparse
-from bookcrawler.items import BookcrawlerItem, QuoteItem
+from bookcrawler.items import BookcrawlerItem, QuoteItem, JobItem
 import os
 
 import psycopg
@@ -27,61 +27,136 @@ class PostgreSQLPipeline:
 
     def process_item(self, item):
 
-        if not isinstance(item, BookcrawlerItem):
+        # --------------------------------
+        # Books
+        # --------------------------------
+
+        if isinstance(item, BookcrawlerItem):
+
+            self.cursor.execute(
+                """
+                INSERT INTO books (
+                    title,
+                    price,
+                    rating,
+                    url,
+                    upc,
+                    product_type,
+                    price_excl_tax,
+                    price_incl_tax,
+                    tax,
+                    availability,
+                    number_of_reviews,
+                    description
+                )
+                VALUES (
+                    %s, %s, %s, %s, %s, %s,
+                    %s, %s, %s, %s, %s, %s
+                )
+                ON CONFLICT (upc)
+                DO UPDATE SET
+                    title = EXCLUDED.title,
+                    price = EXCLUDED.price,
+                    rating = EXCLUDED.rating,
+                    url = EXCLUDED.url,
+                    product_type = EXCLUDED.product_type,
+                    price_excl_tax = EXCLUDED.price_excl_tax,
+                    price_incl_tax = EXCLUDED.price_incl_tax,
+                    tax = EXCLUDED.tax,
+                    availability = EXCLUDED.availability,
+                    number_of_reviews = EXCLUDED.number_of_reviews,
+                    description = EXCLUDED.description
+                """,
+                (
+                    item.title,
+                    item.price,
+                    item.rating,
+                    item.url,
+                    item.upc,
+                    item.product_type,
+                    item.price_excl_tax,
+                    item.price_incl_tax,
+                    item.tax,
+                    item.availability,
+                    item.number_of_reviews,
+                    item.description,
+                ),
+            )
+
+            self.connection.commit()
+
             return item
 
-        self.cursor.execute(
-            """
-            INSERT INTO books (
-                title,
-                price,
-                rating,
-                url,
-                upc,
-                product_type,
-                price_excl_tax,
-                price_incl_tax,
-                tax,
-                availability,
-                number_of_reviews,
-                description
-            )
-            VALUES (
-                %s, %s, %s, %s, %s, %s,
-                %s, %s, %s, %s, %s, %s
-            )
-            ON CONFLICT (upc)
-            DO UPDATE SET
-                title = EXCLUDED.title,
-                price = EXCLUDED.price,
-                rating = EXCLUDED.rating,
-                url = EXCLUDED.url,
-                product_type = EXCLUDED.product_type,
-                price_excl_tax = EXCLUDED.price_excl_tax,
-                price_incl_tax = EXCLUDED.price_incl_tax,
-                tax = EXCLUDED.tax,
-                availability = EXCLUDED.availability,
-                number_of_reviews = EXCLUDED.number_of_reviews,
-                description = EXCLUDED.description
-            """,
-            (
-                item.title,
-                item.price,
-                item.rating,
-                item.url,
-                item.upc,
-                item.product_type,
-                item.price_excl_tax,
-                item.price_incl_tax,
-                item.tax,
-                item.availability,
-                item.number_of_reviews,
-                item.description,
-            ),
-        )
+        # --------------------------------
+        # Jobs
+        # --------------------------------
+        if isinstance(item, JobItem):
 
-        self.connection.commit()
+            try:
+                self.cursor.execute(
+                    """
+                    INSERT INTO jobs (
+                        title,
+                        company,
+                        location,
+                        job_type,
+                        remote,
+                        salary,
+                        description,
+                        url,
+                        source,
+                        external_id,
+                        posted_at,
+                        scraped_at
+                    )
+                    VALUES (
+                        %s, %s, %s, %s, %s, %s,
+                        %s, %s, %s, %s, %s, %s
+                    )
+                    ON CONFLICT (source, external_id)
+                    DO UPDATE SET
+                        title = EXCLUDED.title,
+                        company = EXCLUDED.company,
+                        location = EXCLUDED.location,
+                        job_type = EXCLUDED.job_type,
+                        remote = EXCLUDED.remote,
+                        salary = EXCLUDED.salary,
+                        description = EXCLUDED.description,
+                        url = EXCLUDED.url,
+                        posted_at = EXCLUDED.posted_at,
+                        scraped_at = EXCLUDED.scraped_at
+                    """,
+                    (
+                        item.title,
+                        item.company,
+                        item.location,
+                        item.job_type,
+                        item.remote,
+                        item.salary,
+                        item.description,
+                        item.url,
+                        item.source,
+                        item.external_id,
+                        item.posted_at,
+                        item.scraped_at,
+                    ),
+                )
 
+                self.connection.commit()
+
+            except Exception as e:
+                self.connection.rollback()
+
+                print("========== JOB DATABASE ERROR ==========")
+                print(f"Error: {e}")
+                print(f"Title: {item.title}")
+                print(f"External ID: {item.external_id}")
+                print(f"URL: {item.url}")
+                print("========================================")
+
+                raise
+
+            return item
         return item
 
     def close_spider(self):

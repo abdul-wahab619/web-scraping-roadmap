@@ -27,3 +27,19 @@ class BookcrawlerItem:
     availability: str | None = None
     number_of_reviews: int | None = None
     description: str | None = None
+
+
+@dataclass
+class JobItem:
+    title: str | None = None
+    company: str | None = None
+    location: str | None = None
+    job_type: str | None = None
+    remote: bool | None = None
+    salary: str | None = None
+    description: str | None = None
+    url: str | None = None
+    source: str | None = None
+    external_id: str | None = None
+    posted_at: str | None = None
+    scraped_at: str | None = None
