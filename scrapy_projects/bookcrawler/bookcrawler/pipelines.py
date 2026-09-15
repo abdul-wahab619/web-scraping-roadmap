@@ -420,3 +420,50 @@ class QuoteValidationPipeline:
             raise DropItem("Missing quote author")
 
         return item
+
+
+class JobValidationPipeline:
+    def process_item(self, item):
+        if not isinstance(item, JobItem):
+            return item
+
+        if not item.title or not item.title.strip():
+            raise DropItem("Job missing title")
+
+        if not item.url or not item.url.startswith(("http://", "https://")):
+            raise DropItem(f"Invalid job URL: {item.url}")
+
+        if not item.source or not item.source.strip():
+            raise DropItem("Job missing source")
+
+        if not item.external_id or not item.external_id.strip():
+            raise DropItem("Job missing external_id")
+
+        if not item.scraped_at:
+            raise DropItem("Job missing scraped_at")
+
+        if item.remote is not None and not isinstance(item.remote, bool):
+            raise DropItem("Invalid remote value")
+
+        return item
+
+
+class JobDeduplicationPipeline:
+    def __init__(self):
+        self.seen_jobs = set()
+
+    def process_item(self, item):
+        if not isinstance(item, JobItem):
+            return item
+
+        key = (item.source, item.external_id)
+
+        if key in self.seen_jobs:
+            raise DropItem(
+                f"Duplicate job: source={item.source}, "
+                f"external_id={item.external_id}"
+            )
+
+        self.seen_jobs.add(key)
+
+        return item

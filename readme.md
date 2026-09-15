@@ -31,6 +31,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 25 -> Background scraping job system [Done]
 - Day 26 -> Scheduled crawling system       [Done]
 - Day 27 -> Job Listing Aggregator          [Done]
+- Day 28 -> Job validation and deduplication [Done]
 
 ## Progress
 
@@ -282,6 +283,22 @@ UNIQUE(source, external_id)
 UPSERT
   ↓
 16 clean jobs
+```
+
+### Day 28: Job Validation and Deduplication
+- Validating required job fields before persistence
+- Checking job URLs and source identifiers
+- Rejecting jobs without an `external_id` or scrape timestamp
+- Validating the boolean `remote` field
+- Detecting duplicate jobs with `(source, external_id)` keys
+- Testing both invalid and valid `JobItem` records
+- Keeping the PostgreSQL job table clean and repeatable
+
+## Run Day 28 Validation
+
+```bash
+cd scrapy_projects\bookcrawler
+python test_job_validation.py
 ```
 
 ### FastAPI -> Worker -> Scrapy
