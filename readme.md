@@ -35,6 +35,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 29 -> Multi-source job aggregation    [Done]
 - Day 30 -> Final job aggregation results   [Done]
 - Day 31 -> Crawl failure testing and resilience [Done]
+- Day 32 -> Crawl monitoring and anomaly detection [Done]
 
 ## Progress
 
@@ -322,6 +323,15 @@ UPSERT
 - Testing resilience without compromising the final job dataset
 - Validating that the crawler can recover cleanly during abnormal runs
 
+### Day 32: Crawl Monitoring and Anomaly Detection
+- Tracking crawl duration, items found, items dropped, requests, responses, and retries
+- Recording HTTP errors, spider exceptions, and the last successful crawl timestamp
+- Calculating average crawl duration and failure counts over time
+- Comparing current results to historical item baselines with percentage-of-baseline logic
+- Detecting zero-item anomalies and distinguishing failures from warnings
+- Using `LATERAL` and `LEFT JOIN LATERAL` queries to compare against historical data
+- Classifying crawl health as normal, warning, or failed based on operational signals
+
 ## Run Day 28 Validation
 
 ```bash
@@ -342,8 +352,6 @@ scrapy crawl crawl_failure_test
 - verifies that failed data does not contaminate the PostgreSQL job table
 - checks that validation and deduplication rules still hold under stress
 - helps confirm the crawler is resilient and production-ready
-
-## Run Day 28 Validation
 
 ```bash
 cd scrapy_projects\bookcrawler

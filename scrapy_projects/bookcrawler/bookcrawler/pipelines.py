@@ -265,18 +265,39 @@ class PostgreSQLPipeline:
         if not self.cursor or not self.crawl_run_id:
             return
 
-        exception_count = self.crawler.stats.get_value(
+        stats = self.crawler.stats
+
+        exception_count = stats.get_value(
             "spider_exceptions/count",
             0,
         )
 
-        http_error_count = self.crawler.stats.get_value(
+        http_error_count = stats.get_value(
             "httperror/response_ignored_count",
             0,
         )
 
-        retry_max_reached = self.crawler.stats.get_value(
+        retry_count = stats.get_value(
+            "retry/count",
+            0,
+        )
+
+        retry_max_reached = stats.get_value(
             "retry/max_reached",
+            0,
+        )
+
+        request_count = stats.get_value(
+            "downloader/request_count",
+            0,
+        )
+
+        response_count = stats.get_value(
+            "downloader/response_count",
+            0,
+        )
+        items_dropped = stats.get_value(
+            "item_dropped_count",
             0,
         )
 
@@ -298,18 +319,30 @@ class PostgreSQLPipeline:
 
         self.cursor.execute(
             """
-            UPDATE crawl_runs
-            SET
-                finished_at = %s,
-                status = %s,
-                items_found = %s,
-                error_message = %s
-            WHERE id = %s
-            """,
+        UPDATE crawl_runs
+        SET
+            finished_at = %s,
+            status = %s,
+            items_found = %s,
+            items_dropped = %s,
+            requests = %s,
+            responses = %s,
+            retries = %s,
+            http_errors = %s,
+            spider_exceptions = %s,
+            error_message = %s
+        WHERE id = %s
+        """,
             (
                 datetime.now(timezone.utc),
                 status,
                 self.items_found,
+                items_dropped,
+                request_count,
+                response_count,
+                retry_count,
+                http_error_count,
+                exception_count,
                 error_message,
                 self.crawl_run_id,
             ),
@@ -329,6 +362,17 @@ class PostgreSQLPipeline:
                 (self.source,),
             )
 
+        if items_dropped > 0:
+            spider.logger.warning(
+                "Crawl dropped %d item(s)",
+                items_dropped,
+            )
+
+        if self.items_found == 0:
+            spider.logger.warning(
+                "Crawl returned ZERO items for source=%s",
+                self.source,
+            )
         self.connection.commit()
 
         print(
