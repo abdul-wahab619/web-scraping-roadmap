@@ -2,6 +2,8 @@ from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 from urllib.parse import urlparse
 from bookcrawler.items import BookcrawlerItem, QuoteItem, JobItem
+from datetime import datetime, timezone
+from scrapy import signals
 import os
 
 import psycopg
@@ -12,7 +14,30 @@ load_dotenv()
 
 class PostgreSQLPipeline:
 
+    def __init__(self):
+        self.crawl_run_id = None
+        self.crawl_started_at = None
+        self.items_found = 0
+        self.source = None
+        self.crawler = None
+        self.connection = None
+        self.cursor = None
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        pipeline = cls()
+
+        pipeline.crawler = crawler
+
+        crawler.signals.connect(
+            pipeline.spider_closed,
+            signal=signals.spider_closed,
+        )
+
+        return pipeline
+
     def open_spider(self):
+        spider = self.crawler.spider
         self.connection = psycopg.connect(
             host=os.getenv("POSTGRES_HOST"),
             port=os.getenv("POSTGRES_PORT"),
@@ -23,10 +48,38 @@ class PostgreSQLPipeline:
 
         self.cursor = self.connection.cursor()
 
+        self.source = getattr(spider, "source_name", spider.name)
+        self.crawl_started_at = datetime.now(timezone.utc)
+
         print("PostgreSQL connection established")
 
-    def process_item(self, item):
+        self.cursor.execute(
+            """
+            INSERT INTO crawl_runs (
+                source,
+                started_at,
+                status,
+                items_found
+            )
+            VALUES (%s, %s, %s, %s)
+            RETURNING id
+            """,
+            (
+                self.source,
+                self.crawl_started_at,
+                "running",
+                0,
+            ),
+        )
 
+        self.crawl_run_id = self.cursor.fetchone()[0]
+
+        self.connection.commit()
+
+        print(f"Started crawl run " f"id={self.crawl_run_id}, " f"source={self.source}")
+
+    def process_item(self, item):
+        self.items_found += 1
         # --------------------------------
         # Books
         # --------------------------------
@@ -162,23 +215,134 @@ class PostgreSQLPipeline:
             return item
         return item
 
-    def close_spider(self):
-        if self.cursor:
-            self.cursor.execute("""
+    # def close_spider(self):
+    #     if self.cursor and self.crawl_run_id:
+
+    #         self.cursor.execute(
+    #             """
+    #         UPDATE crawl_runs
+    #         SET
+    #             finished_at = %s,
+    #             status = %s,
+    #             items_found = %s
+    #         WHERE id = %s
+    #         """,
+    #             (
+    #                 datetime.now(timezone.utc),
+    #                 "finished",
+    #                 self.items_found,
+    #                 self.crawl_run_id,
+    #             ),
+    #         )
+
+    #     self.cursor.execute(
+    #         """
+    #         UPDATE jobs
+    #         SET status = CASE
+    #             WHEN last_seen_at < NOW() - INTERVAL '1 day'
+    #                 THEN 'stale'
+    #             ELSE 'active'
+    #         END
+    #         WHERE source = %s
+    #         """,
+    #         (self.source,),
+    #     )
+
+    #     self.connection.commit()
+
+    #     print(
+    #         f"Completed crawl run "
+    #         f"id={self.crawl_run_id}, "
+    #         f"items_found={self.items_found}"
+    #     )
+
+    #     self.cursor.close()
+
+    #     if self.connection:
+    #         self.connection.close()
+
+    def spider_closed(self, spider, reason):
+        if not self.cursor or not self.crawl_run_id:
+            return
+
+        exception_count = self.crawler.stats.get_value(
+            "spider_exceptions/count",
+            0,
+        )
+
+        http_error_count = self.crawler.stats.get_value(
+            "httperror/response_ignored_count",
+            0,
+        )
+
+        retry_max_reached = self.crawler.stats.get_value(
+            "retry/max_reached",
+            0,
+        )
+
+        if exception_count > 0:
+            status = "failed"
+            error_message = f"Spider encountered {exception_count} exception(s)"
+
+        elif http_error_count > 0:
+            status = "failed"
+            error_message = f"HTTP error responses ignored: {http_error_count}"
+
+        elif retry_max_reached > 0:
+            status = "failed"
+            error_message = f"Retry limit reached for {retry_max_reached} request(s)"
+
+        else:
+            status = "finished"
+            error_message = None
+
+        self.cursor.execute(
+            """
+            UPDATE crawl_runs
+            SET
+                finished_at = %s,
+                status = %s,
+                items_found = %s,
+                error_message = %s
+            WHERE id = %s
+            """,
+            (
+                datetime.now(timezone.utc),
+                status,
+                self.items_found,
+                error_message,
+                self.crawl_run_id,
+            ),
+        )
+
+        if status == "finished":
+            self.cursor.execute(
+                """
                 UPDATE jobs
                 SET status = CASE
                     WHEN last_seen_at < NOW() - INTERVAL '1 day'
                         THEN 'stale'
                     ELSE 'active'
                 END
-                """)
+                WHERE source = %s
+                """,
+                (self.source,),
+            )
 
-            self.connection.commit()
+        self.connection.commit()
 
-            self.cursor.close()
+        print(
+            f"Completed crawl run "
+            f"id={self.crawl_run_id}, "
+            f"status={status}, "
+            f"items_found={self.items_found}"
+        )
 
-        if self.connection:
-            self.connection.close()
+        if error_message:
+            print(f"Crawl error: {error_message}")
+
+        self.cursor.close()
+        self.connection.close()
 
         print("PostgreSQL connection closed")
 

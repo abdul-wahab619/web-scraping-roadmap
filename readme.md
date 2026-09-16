@@ -34,6 +34,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 28 -> Job validation and deduplication [Done]
 - Day 29 -> Multi-source job aggregation    [Done]
 - Day 30 -> Final job aggregation results   [Done]
+- Day 31 -> Crawl failure testing and resilience [Done]
 
 ## Progress
 
@@ -311,6 +312,36 @@ UPSERT
 - Persisting clean records to PostgreSQL without duplicate job entries
 - Confirming a final result of 31 jobs from 2 total sources
 - Achieving a final quality score of **10/10** across the full pipeline
+
+### Day 31: Crawl Failure Testing and Resilience
+- Simulating scraper failure scenarios with a dedicated crawl test
+- Verifying how the crawler responds to bad or incomplete responses
+- Checking retry and error-handling behaviour in a production-style flow
+- Confirming that invalid jobs are filtered before reaching PostgreSQL
+- Protecting the pipeline against duplicate or broken records during failures
+- Testing resilience without compromising the final job dataset
+- Validating that the crawler can recover cleanly during abnormal runs
+
+## Run Day 28 Validation
+
+```bash
+cd scrapy_projects\bookcrawler
+python test_job_validation.py
+```
+
+## Run Day 31 Failure Test
+
+```bash
+cd scrapy_projects\bookcrawler
+scrapy crawl crawl_failure_test
+```
+
+## What the Day 31 Test Covers
+
+- runs a focused crawl designed to trigger and observe failure conditions
+- verifies that failed data does not contaminate the PostgreSQL job table
+- checks that validation and deduplication rules still hold under stress
+- helps confirm the crawler is resilient and production-ready
 
 ## Run Day 28 Validation
 

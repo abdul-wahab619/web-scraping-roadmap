@@ -7,6 +7,7 @@ from bookcrawler.items import JobItem
 
 class JobsSpider(scrapy.Spider):
     name = "jobs"
+    source_name = "ycombinator"
 
     allowed_domains = [
         "news.ycombinator.com",

@@ -6,6 +6,7 @@ from bookcrawler.items import JobItem
 
 class RemotiveJobsSpider(scrapy.Spider):
     name = "remotive_jobs"
+    source_name = "remotive"
 
     allowed_domains = [
         "remotive.com",
@@ -18,6 +19,9 @@ class RemotiveJobsSpider(scrapy.Spider):
         )
 
     def parse(self, response):
+        if response.status != 200:
+            raise RuntimeError(f"Remotive API returned HTTP {response.status}")
+
         data = response.json()
 
         jobs = data.get("jobs", [])
