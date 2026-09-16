@@ -91,41 +91,43 @@ class PostgreSQLPipeline:
         # Jobs
         # --------------------------------
         if isinstance(item, JobItem):
-
             try:
                 self.cursor.execute(
                     """
-                    INSERT INTO jobs (
-                        title,
-                        company,
-                        location,
-                        job_type,
-                        remote,
-                        salary,
-                        description,
-                        url,
-                        source,
-                        external_id,
-                        posted_at,
-                        scraped_at
-                    )
-                    VALUES (
-                        %s, %s, %s, %s, %s, %s,
-                        %s, %s, %s, %s, %s, %s
-                    )
-                    ON CONFLICT (source, external_id)
-                    DO UPDATE SET
-                        title = EXCLUDED.title,
-                        company = EXCLUDED.company,
-                        location = EXCLUDED.location,
-                        job_type = EXCLUDED.job_type,
-                        remote = EXCLUDED.remote,
-                        salary = EXCLUDED.salary,
-                        description = EXCLUDED.description,
-                        url = EXCLUDED.url,
-                        posted_at = EXCLUDED.posted_at,
-                        scraped_at = EXCLUDED.scraped_at
-                    """,
+                        INSERT INTO jobs (
+                            title,
+                            company,
+                            location,
+                            job_type,
+                            remote,
+                            salary,
+                            description,
+                            url,
+                            source,
+                            external_id,
+                            posted_at,
+                            scraped_at,
+                            last_seen_at
+                        )
+                        VALUES (
+                            %s, %s, %s, %s, %s, %s,
+                            %s, %s, %s, %s, %s, %s,
+                            %s
+                        )
+                        ON CONFLICT (source, external_id)
+                        DO UPDATE SET
+                            title = EXCLUDED.title,
+                            company = EXCLUDED.company,
+                            location = EXCLUDED.location,
+                            job_type = EXCLUDED.job_type,
+                            remote = EXCLUDED.remote,
+                            salary = EXCLUDED.salary,
+                            description = EXCLUDED.description,
+                            url = EXCLUDED.url,
+                            posted_at = EXCLUDED.posted_at,
+                            scraped_at = EXCLUDED.scraped_at,
+                            last_seen_at = EXCLUDED.last_seen_at
+                        """,
                     (
                         item.title,
                         item.company,
@@ -139,6 +141,7 @@ class PostgreSQLPipeline:
                         item.external_id,
                         item.posted_at,
                         item.scraped_at,
+                        item.last_seen_at,
                     ),
                 )
 
@@ -160,8 +163,22 @@ class PostgreSQLPipeline:
         return item
 
     def close_spider(self):
-        self.cursor.close()
-        self.connection.close()
+        if self.cursor:
+            self.cursor.execute("""
+                UPDATE jobs
+                SET status = CASE
+                    WHEN last_seen_at < NOW() - INTERVAL '1 day'
+                        THEN 'stale'
+                    ELSE 'active'
+                END
+                """)
+
+            self.connection.commit()
+
+            self.cursor.close()
+
+        if self.connection:
+            self.connection.close()
 
         print("PostgreSQL connection closed")
 

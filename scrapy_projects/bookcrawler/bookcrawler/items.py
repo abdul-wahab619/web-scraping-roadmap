@@ -43,3 +43,4 @@ class JobItem:
     external_id: str | None = None
     posted_at: str | None = None
     scraped_at: str | None = None
+    last_seen_at: str | None = None

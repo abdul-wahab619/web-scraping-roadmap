@@ -28,6 +28,8 @@ class RemotiveJobsSpider(scrapy.Spider):
         )
 
         for job in jobs:
+            crawl_time = datetime.now(timezone.utc).isoformat()
+
             yield JobItem(
                 title=job.get("title", "").strip() or None,
                 company=job.get("company_name", "").strip() or None,
@@ -40,5 +42,6 @@ class RemotiveJobsSpider(scrapy.Spider):
                 source="remotive",
                 external_id=str(job.get("id")),
                 posted_at=job.get("publication_date"),
-                scraped_at=datetime.now(timezone.utc).isoformat(),
+                last_seen_at=crawl_time,
+                scraped_at=crawl_time,
             )
