@@ -32,6 +32,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 26 -> Scheduled crawling system       [Done]
 - Day 27 -> Job Listing Aggregator          [Done]
 - Day 28 -> Job validation and deduplication [Done]
+- Day 29 -> Multi-source job aggregation    [Done]
 
 ## Progress
 
@@ -293,6 +294,14 @@ UPSERT
 - Detecting duplicate jobs with `(source, external_id)` keys
 - Testing both invalid and valid `JobItem` records
 - Keeping the PostgreSQL job table clean and repeatable
+
+### Day 29: Multi-source Job Aggregation
+- Scraping jobs from multiple sources, including HTML and API-based feeds (Remotive & YC Jobs)
+- Using source-specific extraction logic with a shared `JobItem`
+- Applying shared validation and deduplication rules across all sources
+- Persisting results to PostgreSQL with a composite `(source, external_id)` identity
+- Achieving 31 jobs across 2 sources with 0 duplicate composite keys
+- Maintaining 100% item data quality on the Remotive crawl
 
 ## Run Day 28 Validation
 

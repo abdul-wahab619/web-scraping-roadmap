@@ -7,7 +7,7 @@ from bookcrawler.items import JobItem
 class ValidationTestSpider(scrapy.Spider):
     name = "validation_test"
 
-    def start_requests(self):
+    async def start(self):
         yield scrapy.Request(
             url="data:text/plain,test",
             callback=self.parse,
