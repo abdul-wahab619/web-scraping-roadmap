@@ -36,6 +36,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 30 -> Final job aggregation results   [Done]
 - Day 31 -> Crawl failure testing and resilience [Done]
 - Day 32 -> Crawl monitoring and anomaly detection [Done]
+- Day 33 -> Monitoring dashboard and health checks [Done]
 
 ## Progress
 
@@ -331,6 +332,16 @@ UPSERT
 - Detecting zero-item anomalies and distinguishing failures from warnings
 - Using `LATERAL` and `LEFT JOIN LATERAL` queries to compare against historical data
 - Classifying crawl health as normal, warning, or failed based on operational signals
+
+### Day 33: Monitoring Dashboard and Health Checks
+- Building a reusable monitoring view for the latest crawl state
+- Tracking the latest crawl status, items found, items dropped, and crawl duration
+- Recording request and response counts, retries, HTTP errors, and spider exceptions
+- Comparing current results against historical item baselines and average durations
+- Calculating item deviation percentage and health classification for each run
+- Identifying consecutive failures and time since the last successful crawl
+- Surfacing the most recent error message to make operational debugging easier
+- Providing a single health summary for monitoring and alerting workflows
 
 ## Run Day 28 Validation
 
