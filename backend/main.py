@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Query, HTTPException
 from database import get_connection
-from schemas import BooksResponse, Book
+from schemas import BooksResponse, Book, SourceHealth, CrawlRun
 from redis_client import redis_client
 from datetime import datetime, timezone
 import uuid
@@ -29,6 +29,41 @@ def row_to_book(row):
     }
 
 
+SOURCE_HEALTH_COLUMNS = [
+    "source",
+    "latest_crawl_id",
+    "latest_status",
+    "latest_items_found",
+    "latest_items_dropped",
+    "latest_requests",
+    "latest_responses",
+    "latest_retries",
+    "latest_http_errors",
+    "latest_spider_exceptions",
+    "latest_duration",
+    "latest_finished_at",
+    "avg_items_found",
+    "percentage_of_average",
+    "health",
+    "last_successful_crawl",
+    "failed_crawls",
+    "consecutive_failures",
+    "latest_duration_seconds",
+    "avg_duration_seconds",
+    "duration_percentage_of_average",
+    "latest_error_message",
+]
+
+
+def row_to_source_health(row):
+    data = dict(zip(SOURCE_HEALTH_COLUMNS, row))
+
+    if data["latest_duration"] is not None:
+        data["latest_duration"] = data["latest_duration"].total_seconds()
+
+    return data
+
+
 @app.get("/")
 def root():
     return {"message": "BookCrawler API is running"}
@@ -37,6 +72,173 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/sources/health", response_model=list[SourceHealth])
+def get_source_health():
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT
+                    source,
+                    latest_crawl_id,
+                    latest_status,
+                    latest_items_found,
+                    latest_items_dropped,
+                    latest_requests,
+                    latest_responses,
+                    latest_retries,
+                    latest_http_errors,
+                    latest_spider_exceptions,
+                    latest_duration,
+                    latest_finished_at,
+                    avg_items_found,
+                    percentage_of_average,
+                    health,
+                    last_successful_crawl,
+                    failed_crawls,
+                    consecutive_failures,
+                    latest_duration_seconds,
+                    avg_duration_seconds,
+                    duration_percentage_of_average,
+                    latest_error_message
+                FROM source_health
+                ORDER BY source
+                """)
+
+            rows = cursor.fetchall()
+
+            health_data = []
+
+            for row in rows:
+                health_data.append(row_to_source_health(row))
+
+            return health_data
+
+    finally:
+        connection.close()
+
+
+@app.get("/sources/health/{source}", response_model=SourceHealth)
+def get_source_health_by_source(source: str):
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    source,
+                    latest_crawl_id,
+                    latest_status,
+                    latest_items_found,
+                    latest_items_dropped,
+                    latest_requests,
+                    latest_responses,
+                    latest_retries,
+                    latest_http_errors,
+                    latest_spider_exceptions,
+                    latest_duration,
+                    latest_finished_at,
+                    avg_items_found,
+                    percentage_of_average,
+                    health,
+                    last_successful_crawl,
+                    failed_crawls,
+                    consecutive_failures,
+                    latest_duration_seconds,
+                    avg_duration_seconds,
+                    duration_percentage_of_average,
+                    latest_error_message
+                FROM source_health
+                WHERE source = %s
+                """,
+                (source,),
+            )
+
+            row = cursor.fetchone()
+
+            if row is None:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Source '{source}' not found",
+                )
+
+            return row_to_source_health(row)
+
+    finally:
+        connection.close()
+
+
+@app.get("/sources/{source}/crawls", response_model=list[CrawlRun])
+def get_source_crawls(
+    source: str,
+    limit: int = Query(default=20, ge=1, le=100),
+):
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    source,
+                    started_at,
+                    finished_at,
+                    status,
+                    items_found,
+                    items_dropped,
+                    requests,
+                    responses,
+                    retries,
+                    http_errors,
+                    spider_exceptions,
+                    error_message
+                FROM crawl_runs
+                WHERE source = %s
+                ORDER BY started_at DESC
+                LIMIT %s
+                """,
+                (source, limit),
+            )
+
+            rows = cursor.fetchall()
+
+            if not rows:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"No crawl history found for source '{source}'",
+                )
+
+            return [
+                dict(
+                    zip(
+                        [
+                            "id",
+                            "source",
+                            "started_at",
+                            "finished_at",
+                            "status",
+                            "items_found",
+                            "items_dropped",
+                            "requests",
+                            "responses",
+                            "retries",
+                            "http_errors",
+                            "spider_exceptions",
+                            "error_message",
+                        ],
+                        row,
+                    )
+                )
+                for row in rows
+            ]
+
+    finally:
+        connection.close()
 
 
 @app.get("/redis/health")

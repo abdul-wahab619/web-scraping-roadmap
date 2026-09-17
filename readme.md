@@ -37,6 +37,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 31 -> Crawl failure testing and resilience [Done]
 - Day 32 -> Crawl monitoring and anomaly detection [Done]
 - Day 33 -> Monitoring dashboard and health checks [Done]
+- Day 34 -> Operational health and alerting [Done]
 
 ## Progress
 
@@ -342,6 +343,16 @@ UPSERT
 - Identifying consecutive failures and time since the last successful crawl
 - Surfacing the most recent error message to make operational debugging easier
 - Providing a single health summary for monitoring and alerting workflows
+
+### Day 34: Operational Health and Alerting
+- Extending the monitoring layer into an operational health view for the scraper
+- Tracking the latest crawl health, failure counters, and success timing
+- Surfacing crawl status, duration, and anomaly thresholds in one place
+- Monitoring request volume, retries, and error spikes across runs
+- Classifying each crawl as healthy, warning, or failed based on recent behavior
+- Comparing current results with historical baselines to catch silent regressions
+- Making it easier to detect when a crawl is stalled, empty, or failing repeatedly
+- Preparing the system for alerting and operational response workflows
 
 ## Run Day 28 Validation
 
