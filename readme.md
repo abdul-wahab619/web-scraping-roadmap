@@ -38,6 +38,7 @@ A simple learning roadmap for practicing Python web scraping step by step.
 - Day 32 -> Crawl monitoring and anomaly detection [Done]
 - Day 33 -> Monitoring dashboard and health checks [Done]
 - Day 34 -> Operational health and alerting [Done]
+- Day 35 -> Source health dashboard integration [Done]
 
 ## Progress
 
@@ -353,6 +354,17 @@ UPSERT
 - Comparing current results with historical baselines to catch silent regressions
 - Making it easier to detect when a crawl is stalled, empty, or failing repeatedly
 - Preparing the system for alerting and operational response workflows
+
+### Day 35: Source Health Dashboard Integration
+- Exposing source-level health metrics through FastAPI endpoints
+- Building `/sources/health` to return the latest crawl summary for every source
+- Building `/sources/health/{source}` for source-specific monitoring details
+- Building `/sources/{source}/crawls` to fetch recent crawl history per source
+- Returning structured `SourceHealth` and `CrawlRun` payloads from the backend
+- Connecting the frontend dashboard to the live monitoring API
+- Rendering source cards with status, crawl stats, and operational health
+- Showing recent crawl history for each source to support debugging and alerting
+- Integrating automatic refresh so the dashboard stays current during monitoring
 
 ## Run Day 28 Validation
 
