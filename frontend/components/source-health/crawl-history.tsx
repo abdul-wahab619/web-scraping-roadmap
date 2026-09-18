@@ -13,6 +13,19 @@ function formatDate(value: string | null) {
   return new Date(value).toLocaleString();
 }
 
+function getRowClass(status: string) {
+  const normalizedStatus = status.toUpperCase();
+
+  if (normalizedStatus === "FAILED") {
+    return "bg-red-50";
+  }
+
+  if (normalizedStatus === "FINISHED") {
+    return "bg-green-50";
+  }
+
+  return "bg-gray-50";
+}
 export function CrawlHistory({ crawls }: CrawlHistoryProps) {
   return (
     <section className="mt-8">
@@ -42,12 +55,19 @@ export function CrawlHistory({ crawls }: CrawlHistoryProps) {
                 <th className="px-4 py-3 font-medium">Duration</th>
 
                 <th className="px-4 py-3 font-medium">Started</th>
+
+                <th className="px-4 py-3 font-medium">Error</th>
               </tr>
             </thead>
 
             <tbody>
               {crawls.map((crawl) => (
-                <tr key={crawl.id} className="border-b last:border-b-0">
+                <tr
+                  key={crawl.id}
+                  className={`border-b last:border-b-0 ${getRowClass(
+                    crawl.status,
+                  )}`}
+                >
                   <td className="px-4 py-3 font-medium">#{crawl.id}</td>
 
                   <td className="px-4 py-3">
@@ -72,6 +92,9 @@ export function CrawlHistory({ crawls }: CrawlHistoryProps) {
 
                   <td className="px-4 py-3 whitespace-nowrap">
                     {formatDate(crawl.started_at)}
+                  </td>
+                  <td className="max-w-xs px-4 py-3 text-red-600">
+                    {crawl.error_message ?? "N/A"}
                   </td>
                 </tr>
               ))}
