@@ -1,0 +1,23 @@
+{
+  "name": "serpapi",
+  "version": "1.0.0",
+  "description": "exploring web scraping through serpApi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "serpapi",
+    "web",
+    "scraping",
+    "scrapy",
+    "web-scraping"
+  ],
+  "author": "Abdul Wahab",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^18.0.4",
+    "express": "^5.2.1",
+    "serpapi": "^2.2.1"
+  }
+}

@@ -3,6 +3,7 @@ import time
 import logging
 import uuid
 from datetime import datetime, timezone, timedelta
+from database import get_connection
 
 # from dotenv import load_dotenv
 
@@ -32,7 +33,114 @@ def get_scrape_interval():
     return int(interval)
 
 
-def create_scrape_job():
+def get_enabled_sources():
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT source
+                FROM sources
+                WHERE enabled = TRUE
+                ORDER BY source
+                """)
+
+            rows = cursor.fetchall()
+
+            return [row[0] for row in rows]
+
+    finally:
+        connection.close()
+
+
+def get_source_eligibility(source: str):
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    s.enabled,
+                    s.interval_minutes,
+
+                    EXISTS (
+                        SELECT 1
+                        FROM crawl_runs running
+                        WHERE running.source = s.source
+                          AND running.status = 'running'
+                    ) AS crawl_running,
+
+                    MAX(cr.started_at) AS latest_crawl
+
+                FROM sources s
+
+                LEFT JOIN crawl_runs cr
+                    ON cr.source = s.source
+
+                WHERE s.source = %s
+
+                GROUP BY
+                    s.source,
+                    s.enabled,
+                    s.interval_minutes
+                """,
+                (source,),
+            )
+
+            row = cursor.fetchone()
+
+            if row is None:
+                return {
+                    "eligible": False,
+                    "reason": "SOURCE_NOT_FOUND",
+                }
+
+            enabled, interval_minutes, crawl_running, latest_crawl = row
+
+            if not enabled:
+                return {
+                    "eligible": False,
+                    "reason": "DISABLED",
+                }
+
+            if crawl_running:
+                return {
+                    "eligible": False,
+                    "reason": "ALREADY_RUNNING",
+                }
+
+            if latest_crawl is not None:
+                cooldown_until = latest_crawl + timedelta(minutes=interval_minutes)
+
+                now = datetime.now(timezone.utc)
+
+                if now < cooldown_until:
+                    return {
+                        "eligible": False,
+                        "reason": "COOLDOWN",
+                    }
+
+            return {
+                "eligible": True,
+                "reason": "ELIGIBLE",
+            }
+
+    finally:
+        connection.close()
+
+
+def create_scrape_job(source: str):
+    eligibility = get_source_eligibility(source)
+
+    if not eligibility["eligible"]:
+        logger.info(
+            "Skipping source '%s': %s",
+            source,
+            eligibility["reason"],
+        )
+        return
+
     lock_key = "scrape_scheduler_lock"
     interval = get_scrape_interval()
 
@@ -50,7 +158,6 @@ def create_scrape_job():
         return
 
     job_id = str(uuid.uuid4())
-
     job_key = f"scrape_job:{job_id}"
 
     scheduled_at = datetime.now(timezone.utc).isoformat()
@@ -63,6 +170,7 @@ def create_scrape_job():
             "job_id": job_id,
             "status": "queued",
             "job_type": "scheduled",
+            "source": source,
             "scheduled_at": scheduled_at,
             "next_run_at": next_run_at,
         },
@@ -72,13 +180,18 @@ def create_scrape_job():
         "scrape_queue",
         job_id,
     )
+
     redis_client.hset(
         "scrape_schedule",
         "last_run_at",
         scheduled_at,
     )
 
-    logger.info(f"Scheduled scrape job: {job_id}")
+    logger.info(
+        "Scheduled scrape job: %s for source '%s'",
+        job_id,
+        source,
+    )
 
 
 def start_scheduler():
@@ -88,12 +201,27 @@ def start_scheduler():
         try:
             interval = get_scrape_interval()
 
-            logger.info(f"Next scrape interval: {interval} seconds")
+            logger.info(
+                "Next scrape interval: %s seconds",
+                interval,
+            )
 
-            create_scrape_job()
+            sources = get_enabled_sources()
+
+            logger.info(
+                "Found %d enabled source(s): %s",
+                len(sources),
+                sources,
+            )
+
+            for source in sources:
+                create_scrape_job(source)
 
         except Exception as error:
-            logger.error(f"Scheduler error: {error}")
+            logger.exception(
+                "Scheduler error: %s",
+                error,
+            )
 
             interval = 10
 

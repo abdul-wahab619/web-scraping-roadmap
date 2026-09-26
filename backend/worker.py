@@ -11,9 +11,38 @@ SCRAPY_PYTHON = (
     r"D:\web-scraping-roadmap\scrapy_projects" r"\bookcrawler\.venv\Scripts\python.exe"
 )
 
+SOURCE_TO_SPIDER = {
+    "books": "books",
+    "remotive": "remotive_jobs",
+}
+
 
 def process_job(job_id):
+
     job_key = f"scrape_job:{job_id}"
+
+    source = redis_client.hget(job_key, "source")
+
+    if isinstance(source, bytes):
+        source = source.decode("utf-8")
+
+    spider = SOURCE_TO_SPIDER.get(source)
+
+    if spider is None:
+        failed_at = datetime.now(timezone.utc).isoformat()
+
+        redis_client.hset(
+            job_key,
+            mapping={
+                "status": "failed",
+                "error": f"No spider configured for source: {source}",
+                "failed_at": failed_at,
+            },
+        )
+
+        print(f"Job failed: no spider configured for source '{source}'")
+
+        return
 
     attempt = int(redis_client.hget(job_key, "attempt") or 0) + 1
 
@@ -22,9 +51,13 @@ def process_job(job_id):
         "attempt",
         attempt,
     )
+
     started_at = datetime.now(timezone.utc).isoformat()
 
-    print(f"Processing job: {job_id} (attempt {attempt})")
+    print(
+        f"Processing job: {job_id} "
+        f"(source={source}, spider={spider}, attempt={attempt})"
+    )
 
     redis_client.hset(
         job_key,
@@ -35,13 +68,14 @@ def process_job(job_id):
     )
 
     try:
+
         subprocess.run(
             [
                 SCRAPY_PYTHON,
                 "-m",
                 "scrapy",
                 "crawl",
-                "books",
+                spider,
             ],
             cwd=SCRAPY_PROJECT_DIR,
             check=True,
@@ -65,9 +99,11 @@ def process_job(job_id):
         )
 
         print(f"Completed job: {job_id}")
+
         redis_client.delete("scrape_scheduler_lock")
 
     except Exception as error:
+
         failed_at = datetime.now(timezone.utc).isoformat()
 
         started = datetime.fromisoformat(redis_client.hget(job_key, "started_at"))
@@ -77,6 +113,7 @@ def process_job(job_id):
         duration_seconds = (failed - started).total_seconds()
 
         if attempt <= MAX_RETRIES:
+
             redis_client.hset(
                 job_key,
                 mapping={
@@ -95,6 +132,7 @@ def process_job(job_id):
             print(f"Job failed. Retrying: {job_id}")
 
         else:
+
             redis_client.hset(
                 job_key,
                 mapping={
@@ -106,7 +144,9 @@ def process_job(job_id):
             )
 
             print(f"Job failed permanently: {job_id}")
+
             print(f"Error: {error}")
+
             redis_client.delete("scrape_scheduler_lock")
 
 
