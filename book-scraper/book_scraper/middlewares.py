@@ -10,91 +10,91 @@ from itemadapter import ItemAdapter
 
 
 class BookScraperSpiderMiddleware:
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the spider middleware does not modify the
-    # passed objects.
+    """Observe responses and items passing through the spider."""
 
     @classmethod
     def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
-        s = cls()
-        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
-        return s
+        middleware = cls()
+        middleware.crawler = crawler
 
-    def process_spider_input(self, response, spider):
-        # Called for each response that goes through the spider
-        # middleware and into the spider.
+        crawler.signals.connect(
+            middleware.spider_opened,
+            signal=signals.spider_opened,
+        )
+        return middleware
 
-        # Should return None or raise an exception.
+    def process_spider_input(self, response):
+        spider = self.crawler.spider
+        spider.logger.debug("Spider input: %s", response.url)
         return None
 
-    def process_spider_output(self, response, result, spider):
-        # Called with the results returned from the Spider, after
-        # it has processed the response.
+    def process_spider_output(self, response, result):
+        for output in result:
+            yield output
 
-        # Must return an iterable of Request, or item objects.
-        for i in result:
-            yield i
+    async def process_spider_output_async(self, response, result):
+        async for output in result:
+            yield output
 
-    def process_spider_exception(self, response, exception, spider):
-        # Called when a spider or process_spider_input() method
-        # (from other spider middleware) raises an exception.
-
-        # Should return either None or an iterable of Request or item objects.
-        pass
+    def process_spider_exception(self, response, exception):
+        spider = self.crawler.spider
+        spider.logger.error(
+            "Spider callback failed for %s: %s",
+            response.url,
+            exception,
+        )
+        return None
 
     async def process_start(self, start):
-        # Called with an async iterator over the spider start() method or the
-        # matching method of an earlier spider middleware.
-        async for item_or_request in start:
-            yield item_or_request
+        async for item in start:
+            yield item
 
     def spider_opened(self, spider):
-        spider.logger.info("Spider opened: %s" % spider.name)
+        spider.logger.info("Spider opened: %s", spider.name)
 
 
 class BookScraperDownloaderMiddleware:
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the downloader middleware does not modify the
-    # passed objects.
+    """Log requests and responses for the book scraper."""
 
     @classmethod
     def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
-        s = cls()
-        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
-        return s
+        middleware = cls()
+        middleware.stats = crawler.stats
+        return middleware
 
     def process_request(self, request, spider):
-        # Called for each request that goes through the downloader
-        # middleware.
+        self.stats.inc_value("book_scraper/requests_seen")
 
-        # Must either:
-        # - return None: continue processing this request
-        # - or return a Response object
-        # - or return a Request object
-        # - or raise IgnoreRequest: process_exception() methods of
-        #   installed downloader middleware will be called
+        spider.logger.debug(
+            "Outgoing request: %s",
+            request.url,
+        )
+
+        # None means continue through the downloader chain.
         return None
 
     def process_response(self, request, response, spider):
-        # Called with the response returned from the downloader.
+        self.stats.inc_value("book_scraper/responses_received")
 
-        # Must either;
-        # - return a Response object
-        # - return a Request object
-        # - or raise IgnoreRequest
+        spider.logger.debug(
+            "Received HTTP %s: %s",
+            response.status,
+            response.url,
+        )
+
         return response
 
     def process_exception(self, request, exception, spider):
-        # Called when a download handler or a process_request()
-        # (from other downloader middleware) raises an exception.
+        self.stats.inc_value("book_scraper/download_exceptions")
 
-        # Must either:
-        # - return None: continue processing this exception
-        # - return a Response object: stops process_exception() chain
-        # - return a Request object: stops process_exception() chain
-        pass
+        spider.logger.warning(
+            "Download exception for %s: %s",
+            request.url,
+            exception,
+        )
+
+        # None allows other middleware to handle the exception.
+        return None
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
