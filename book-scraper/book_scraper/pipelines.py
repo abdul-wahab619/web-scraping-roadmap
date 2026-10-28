@@ -11,8 +11,15 @@ load_dotenv()
 
 
 class PostgresPipeline:
-    def open_spider(self, spider):
+    @classmethod
+    def from_crawler(cls, crawler):
+        pipeline = cls()
+        pipeline.crawler = crawler
+        return pipeline
+
+    def open_spider(self):
         """Connect to PostgreSQL and prepare the database table."""
+        spider = self.crawler.spider
 
         self.connection = psycopg.connect(
             host=os.getenv("POSTGRES_HOST", "localhost"),
@@ -41,9 +48,11 @@ class PostgresPipeline:
         """)
         self.connection.commit()
 
-        spider.logger.info("Connected to PostgreSQL.")
+        if spider:
+            spider.logger.info("Connected to PostgreSQL.")
 
-    def process_item(self, item, spider):
+    def process_item(self, item):
+        spider = self.crawler.spider
         """Validate and upsert one book record."""
 
         adapter = ItemAdapter(item)
@@ -133,17 +142,20 @@ class PostgresPipeline:
 
         except psycopg.Error:
             self.connection.rollback()
-            spider.logger.exception(
-                "PostgreSQL write failed for %s",
-                product_url,
-            )
+            if spider:
+                spider.logger.exception(
+                    "PostgreSQL write failed for %s",
+                    product_url,
+                )
             raise
 
         return item
 
-    def close_spider(self, spider):
+    def close_spider(self):
         """Close the database connection when crawling ends."""
+        spider = self.crawler.spider
 
         if getattr(self, "connection", None) is not None:
             self.connection.close()
-            spider.logger.info("PostgreSQL connection closed.")
+            if spider:
+                spider.logger.info("PostgreSQL connection closed.")

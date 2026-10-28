@@ -54,47 +54,44 @@ class BookScraperSpiderMiddleware:
 
 
 class BookScraperDownloaderMiddleware:
-    """Log requests and responses for the book scraper."""
-
     @classmethod
     def from_crawler(cls, crawler):
         middleware = cls()
+        middleware.crawler = crawler
         middleware.stats = crawler.stats
         return middleware
 
-    def process_request(self, request, spider):
+    def process_request(self, request):
         self.stats.inc_value("book_scraper/requests_seen")
 
-        spider.logger.debug(
-            "Outgoing request: %s",
-            request.url,
-        )
+        spider = self.crawler.spider
+        if spider:
+            spider.logger.debug("Outgoing request: %s", request.url)
 
-        # None means continue through the downloader chain.
         return None
 
-    def process_response(self, request, response, spider):
+    def process_response(self, request, response):
         self.stats.inc_value("book_scraper/responses_received")
 
-        spider.logger.debug(
-            "Received HTTP %s: %s",
-            response.status,
-            response.url,
-        )
+        spider = self.crawler.spider
+        if spider:
+            spider.logger.debug(
+                "Received HTTP %s: %s",
+                response.status,
+                response.url,
+            )
 
         return response
 
-    def process_exception(self, request, exception, spider):
+    def process_exception(self, request, exception):
         self.stats.inc_value("book_scraper/download_exceptions")
 
-        spider.logger.warning(
-            "Download exception for %s: %s",
-            request.url,
-            exception,
-        )
+        spider = self.crawler.spider
+        if spider:
+            spider.logger.warning(
+                "Download exception for %s: %s",
+                request.url,
+                exception,
+            )
 
-        # None allows other middleware to handle the exception.
         return None
-
-    def spider_opened(self, spider):
-        spider.logger.info("Spider opened: %s" % spider.name)

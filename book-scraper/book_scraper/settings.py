@@ -19,13 +19,26 @@ ADDONS = {
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = "book_scraper (+http://www.yourdomain.com)"
 
+# Retry transient HTTP errors.
+RETRY_ENABLED = True
+RETRY_TIMES = 3
+
+RETRY_HTTP_CODES = [
+    408,
+    429,
+    500,
+    502,
+    503,
+    504,
+]
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
 # Concurrency and throttling settings
 # CONCURRENT_REQUESTS = 16
-CONCURRENT_REQUESTS_PER_DOMAIN = 2
 DOWNLOAD_DELAY = 0.5
+DOWNLOAD_DELAY_JITTER = 0.5
+CONCURRENT_REQUESTS_PER_DOMAIN = 2
 
 LOG_LEVEL = "INFO"
 
@@ -51,8 +64,11 @@ SPIDER_MIDDLEWARES = {
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
+    "scrapy.downloadermiddlewares.retry.RetryMiddleware": None,
+    "book_scraper.retry_after.RetryAfterMiddleware": 550,
     "book_scraper.middlewares.BookScraperDownloaderMiddleware": 543,
 }
+
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
