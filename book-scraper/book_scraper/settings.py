@@ -93,3 +93,25 @@ ITEM_PIPELINES = {
 
 # Set settings whose default value is deprecated to a future-proof value
 FEED_EXPORT_ENCODING = "utf-8"
+
+FEED_EXPORT_FIELDS = [
+    "title",
+    "price",
+    "rating",
+    "availability",
+    "product_url",
+    "image_url",
+]
+
+FEEDS = {
+    "exports/books.jsonl": {
+        "format": "jsonlines",
+        "encoding": "utf8",
+        "overwrite": True,
+    },
+    "exports/books.csv": {
+        "format": "csv",
+        "encoding": "utf8",
+        "overwrite": True,
+    },
+}
