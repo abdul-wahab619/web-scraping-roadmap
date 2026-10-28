@@ -59,9 +59,14 @@ DOWNLOADER_MIDDLEWARES = {
 #    "scrapy.extensions.telnet.TelnetConsole": None,
 # }
 
+SPIDERMON_ENABLED = True
+
 EXTENSIONS = {
     "book_scraper.extensions.CrawlStatsExtension": 500,
+    "spidermon.contrib.scrapy.extensions.Spidermon": 550,
 }
+
+SPIDERMON_SPIDER_CLOSE_MONITORS = ("book_scraper.monitors.SpiderCloseMonitorSuite",)
 
 
 # Configure item pipelines
