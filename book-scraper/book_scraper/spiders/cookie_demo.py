@@ -13,6 +13,17 @@ class CookieDemoSpider(scrapy.Spider):
         "EXTENSIONS": {
             "spidermon.contrib.scrapy.extensions.Spidermon": None,
         },
+        "FEED_EXPORT_FIELDS": [
+            "test",
+            "cookies",
+        ],
+        "FEEDS": {
+            "exports/cookie_test.jsonl": {
+                "format": "jsonlines",
+                "encoding": "utf8",
+                "overwrite": True,
+            },
+        },
     }
 
     async def start(self):
