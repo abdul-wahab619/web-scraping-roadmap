@@ -75,6 +75,13 @@ class BookScraperDownloaderMiddleware:
 
         spider = self.crawler.spider
         if spider:
+            if response.status == 407 and request.meta.get("proxy"):
+                self.stats.inc_value("book_scraper/proxy_auth_failures")
+                spider.logger.error(
+                    "Proxy authentication failed (HTTP 407) for %s",
+                    request.url,
+                )
+
             spider.logger.debug(
                 "Received HTTP %s: %s",
                 response.status,
@@ -87,11 +94,38 @@ class BookScraperDownloaderMiddleware:
         self.stats.inc_value("book_scraper/download_exceptions")
 
         spider = self.crawler.spider
-        if spider:
+        if not spider:
+            return None
+
+        # Only classify failures for requests using a proxy.
+        if request.meta.get("proxy"):
+            exception_name = type(exception).__name__
+
+            if "refused" in exception_name.lower():
+                category = "connection_refused"
+            elif "timeout" in exception_name.lower():
+                category = "timeout"
+            elif "tunnel" in exception_name.lower():
+                category = "tunnel_error"
+            elif "dns" in exception_name.lower():
+                category = "dns_failure"
+            else:
+                category = "other"
+
+            self.stats.inc_value(f"book_scraper/proxy_failures/{category}")
+
+            spider.logger.warning(
+                "Proxy failure [%s] for %s: %s",
+                category,
+                request.url,
+                exception,
+            )
+        else:
             spider.logger.warning(
                 "Download exception for %s: %s",
                 request.url,
                 exception,
             )
 
+        # Let the retry middleware handle the exception.
         return None

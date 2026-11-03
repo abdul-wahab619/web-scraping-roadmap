@@ -9,3 +9,11 @@ __pycache__/
 
 # Environment variables
 .env
+
+# Additional environment files
+.env.*
+!.env.example
+
+# Squid proxy credentials
+**/docker/squid/passwords
+'@ | Add-Content .gitignore

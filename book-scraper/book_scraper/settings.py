@@ -69,7 +69,7 @@ SPIDER_MIDDLEWARES = {
 DOWNLOADER_MIDDLEWARES = {
     "scrapy.downloadermiddlewares.retry.RetryMiddleware": None,
     "book_scraper.retry_after.RetryAfterMiddleware": 550,
-    "book_scraper.middlewares.BookScraperDownloaderMiddleware": 543,
+    "book_scraper.middlewares.BookScraperDownloaderMiddleware": 560,
 }
 
 
