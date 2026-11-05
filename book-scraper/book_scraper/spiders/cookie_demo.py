@@ -12,8 +12,6 @@ class CookieDemoSpider(scrapy.Spider):
     name = "cookie_demo"
     allowed_domains = ["httpbin.org"]
 
-    # This demonstration should not write test data to PostgreSQL
-    # or run the 100-book Spidermon check.
     custom_settings = {
         "ITEM_PIPELINES": {},
         "SPIDERMON_ENABLED": False,
@@ -21,10 +19,7 @@ class CookieDemoSpider(scrapy.Spider):
             "spidermon.contrib.scrapy.extensions.Spidermon": None,
         },
         "HTTPPROXY_ENABLED": True,
-        "FEED_EXPORT_FIELDS": [
-            "test",
-            "cookies",
-        ],
+        "FEED_EXPORT_FIELDS": ["test", "cookies"],
         "FEEDS": {
             "exports/cookie_test.jsonl": {
                 "format": "jsonlines",
@@ -74,6 +69,20 @@ class CookieDemoSpider(scrapy.Spider):
         )
 
     async def start(self):
+        mode = getattr(self, "mode", "cookies")
+
+        if mode == "status_test":
+            yield scrapy.Request(
+                "https://httpbin.org/status/403",
+                callback=self.parse_status,
+                meta={
+                    "proxy": self.get_proxy_url(),
+                    "dont_retry": True,
+                    "handle_httpstatus_all": True,
+                },
+            )
+            return
+
         yield scrapy.Request(
             "https://httpbin.org/cookies/set/session_id/scrapy_demo",
             callback=self.parse,
@@ -81,6 +90,13 @@ class CookieDemoSpider(scrapy.Spider):
                 "cookiejar": "session_1",
                 "proxy": self.get_proxy_url(),
             },
+        )
+
+    def parse_status(self, response):
+        self.logger.info(
+            "Status test completed: HTTP %s received from %s",
+            response.status,
+            response.url,
         )
 
     def parse(self, response):
