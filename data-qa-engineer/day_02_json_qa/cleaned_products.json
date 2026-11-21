@@ -1,0 +1,70 @@
+[
+    {
+        "id": 1,
+        "name": "Laptop",
+        "price": 1200.5,
+        "rating": 4.5,
+        "is_valid": true,
+        "issues": []
+    },
+    {
+        "id": 2,
+        "name": "Phone",
+        "price": 800.0,
+        "rating": 4.2,
+        "is_valid": true,
+        "issues": []
+    },
+    {
+        "id": 3,
+        "name": null,
+        "price": 500.0,
+        "rating": 3.9,
+        "is_valid": false,
+        "issues": [
+            "missing name"
+        ]
+    },
+    {
+        "id": 4,
+        "name": "Tablet",
+        "price": -100.0,
+        "rating": 4.1,
+        "is_valid": false,
+        "issues": [
+            "price must be positive"
+        ]
+    },
+    {
+        "id": 5,
+        "name": "Monitor",
+        "price": null,
+        "rating": 6.5,
+        "is_valid": false,
+        "issues": [
+            "invalid price",
+            "rating out of range"
+        ]
+    },
+    {
+        "id": 6,
+        "name": "Keyboard",
+        "price": null,
+        "rating": null,
+        "is_valid": false,
+        "issues": [
+            "invalid price",
+            "missing rating"
+        ]
+    },
+    {
+        "id": 7,
+        "name": "Mouse",
+        "price": 45.99,
+        "rating": null,
+        "is_valid": false,
+        "issues": [
+            "missing rating"
+        ]
+    }
+]

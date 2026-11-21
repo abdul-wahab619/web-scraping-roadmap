@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "products": [
+    {
+      "id": 1,
+      "name": "Laptop",
+      "price": "1,200.50",
+      "rating": { "value": 4.5, "count": 120 }
+    },
+    {
+      "id": 2,
+      "name": "Phone",
+      "price": "$800.00",
+      "rating": { "value": 4.2, "count": 80 }
+    },
+    {
+      "id": 3,
+      "name": null,
+      "price": "500",
+      "rating": { "value": 3.9, "count": 50 }
+    },
+    {
+      "id": 4,
+      "name": "Tablet",
+      "price": "-100",
+      "rating": { "value": 4.1, "count": 30 }
+    },
+    {
+      "id": 5,
+      "name": "Monitor",
+      "price": "invalid",
+      "rating": { "value": 6.5, "count": 40 }
+    },
+    {
+      "id": 6,
+      "name": "Keyboard",
+      "price": null,
+      "rating": null
+    },
+    {
+      "id": 7,
+      "name": "Mouse",
+      "price": "45.99",
+      "rating": { "value": null, "count": 10 }
+    }
+  ]
+}

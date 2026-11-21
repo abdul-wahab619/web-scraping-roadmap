@@ -56,9 +56,10 @@ for product in products:
     errors = validate_product(product)
 
     if errors:
-        for index, error in enumerate(errors):
-            print(f"Record {product['id']}:")
-            print(f"- {error}\n")
+        print(f"Record {product['id']} FAILED")
+
+        for error in errors:
+            print(f"- {error}")
     else:
         print(f"Record {product['id']} PASSED\n")
 
