@@ -1,0 +1,15 @@
+
+product_id,title,price,rating
+101,Laptop,1200,4.5
+102,Phone,800,4.2
+103,Tablet,450,4.0
+104,Monitor,300,4.8
+105,Keyboard,50,3.9
+106,Mouse,25,4.1
+107,Headphones,,4.3
+108,Webcam,90,6.0
+109,Speaker,-20,3.5
+110,Charger,30,
+102,Phone,800,4.2
+111,Smartwatch,150,5.5
+112,,200,3.8

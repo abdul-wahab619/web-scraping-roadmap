@@ -1,0 +1,9 @@
+product_id,title,price,rating
+102,Phone,800.0,4.2
+107,Headphones,,4.3
+108,Webcam,90.0,6.0
+109,Speaker,-20.0,3.5
+110,Charger,30.0,
+102,Phone,800.0,4.2
+111,Smartwatch,150.0,5.5
+112,,200.0,3.8
